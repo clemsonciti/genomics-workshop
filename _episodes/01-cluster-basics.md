@@ -260,19 +260,232 @@ genomics-workshop  shell-basics  shell-basics.zip
 ~~~
 {: .output}
 
-## Filesystem layout
+> ## Exploring the `shell-basics` folder
+> 
+> This is a pen-and-paper exercise.
+>
+> Explore the directory `data-shell`, 
+> and draw a diagram representing the
+> layout of the files and folders inside it.
+> Here is an example diagram:
+>
+> ~~~
+> ├── reminders.txt
+> ├── software/
+> │   ├── README.txt
+> │   └── matlab/
+> │       └── install.txt
+> └── thesis/
+> ~~~
+>
+> Compare your diagram with your neighbour's.
+> Did you find any differences?
+>
+> Here are some commands you may find useful
+>
+> Command           | Action
+> ------------------|--------------------------
+> `cd ..`           | Go "up" one directory
+> `ls DIR`          | List the contents of the directory `DIR`
+> `cd A/B`          | Change directory to `B`, a sub-directory of `A`
+>
+{: .challenge}
 
-Root directory, home directory
-Using relative v/s absolute paths
-
-## Exercise, create a directory structure.
+> ## Relative v/s absolute paths
+>
+> The word "path" is often used to refer to the location
+> of a file or folder.
+> Paths can be *relative* or *absolute*.
+> 
+> A relative path specifies the location of a file or folder
+> *relative* to the current directory. For example,
+> starting from the home directory, `shell-basics/data/molecules`
+> is a relative path to the `molecules` directory:
+> 
+> ~~~
+> [atrikut@login001 ~]$ cd shell-basics/data/molecules/
+> ~~~
+> 
+> But starting from the `shell-basics` directory,
+> the relative path is instead `data/molecules`:
+> 
+> ~~~
+> [atrikut@login001 molecules]$ cd ~/shell-basics
+> [atrikut@login001 shell-basics]$ cd data/molecules/
+> ~~~
+> 
+> Thus the relative path to a file or directory
+> is different from different locations in the filesystem.
+> 
+> An absolute path specifies the location of a file or folder
+> starting from the top-most (i.e., the "root" directory `/`).
+> It always begins with a slash `/`:
+> 
+> ~~~
+> [atrikut@login001 molecules]$ cd /home/atrikut/shell-basics/data/molecules
+> ~~~
+> 
+> The absolute path to a file or directory
+> is the same everywhere.
+> 
+{: .callout}
 
 ## Types of files
 
+Looking at the shell-basics directory,
+we see two files `notes.txt` and `solar.pdf`:
+
+~~~
+[atrikut@login001 shell-basics]$ ls
+~~~
+{: .bash}
+
+~~~
+data  notes.txt  programs  solar.pdf
+~~~
+{: .output}
+
+The extension of a file (e.g., `.txt` or `.pdf`)
+is a *hint* to the user about the contents of that file.
+There is no requirement that filenames include an extension,
+and a file may be given any extension regardless of its contents
+(for example, you may rename a PDF file with an `.mp3` extension,
+but that will not transform it into a song!).
+
+Broadly speaking, files are of two types:
+
+1. **Text files** are files that contain data in human-readable
+format such as letters and numbers.
+A text file can be easily viewed and edited using any text-editor,
+such as Notepad, TextEdit or Atom.
+
+2. **Binary files** are files that contain data in machine-readable format.
+Special programs are required to open, view or edit binary files.
+For example, a `.docx` file can only be understood by programs
+like Microsoft Word or OpenOffice Writer.
+
+> ## Text v/s binary files
+>
+> The commands `cat`, `head` and `tail` are useful
+> for viewing files.
+>
+> Command           | Action
+> ------------------|--------------------------
+> `cat FILE`        | Print the contents of the file `FILE`
+> `cat FILE1 FILE2` | Concatenate (join) the files `FILE1` and `FILE2` and print the result
+> `head FILE`       | Print the first 10 lines of the file `FILE`
+> `head -n 4 FILE`  | Print the first 4 lines of the file `FILE`
+> `tail FILE`       | Print the last 10 lines of the file `FILE`
+> `tail -n 4 FILE`  | Print the last 4 lines of the file `FILE`
+>
+> Print the first few lines of the two files
+> `notes.txt` and `solar.pdf`.
+> Can you explain the output of each command?
+>
+{: .challenge}
+
 ## Using a text editor
 
-## Running scripts
+Graphical text editors like Notepad or Atom are unavailable
+on the cluster.
+Instead, you must use a terminal-based text editor
+to edit text files.
+`nano` is a very simple editor that can be used
+for basic text editing:
 
-## File and folder permissions
+~~~
+[atrikut@login001 shell-basics]$ nano notes.txt
+~~~
+{: .bash}
 
-## Getting help
+When you open a text file such as `notes.txt` using `nano`,
+you should see the following screen:
+
+~~~
+  GNU nano 2.3.1		File: notes.txt
+
+- finish experiments
+- write thesis
+- get post-doc position (pref. with Dr. Horrible)
+
+
+
+
+
+
+
+
+
+
+
+^G Get Help  ^O WriteOut  ^R Read File ^Y Prev Page ^K Cut Text  ^C Cur Pos
+^X Exit      ^J Justify   ^W Where Is  ^V Next Page ^U UnCut Text^T To Spell
+~~~
+{: .output}
+
+Here, you can add or remove text.
+Along the bottom of the editor window,
+you will see that you can type `^O` (or `Control+O`)
+to write out or "save" any changes you make,
+and `Control+X` to exit `nano`.
+When prompted for "Yes" or "No",
+you can type the `Y` or `N` key respectively.
+
+## Running programs and scripts
+
+The shell is more than a way to create and look at files and folders,
+it's also a way for you to run programs and view their output.
+In fact, so far, we have been doing exactly this.
+When you type in `pwd`, you are really running a program called `pwd`.
+The program produces some output (in this case, the current working directory),
+which you view on the screen.
+You can use the `which` command to see where the program is located:
+
+~~~
+$ which pwd
+/usr/bin/pwd
+~~~
+
+Programs can be **executables**, i.e.,
+binary instructions that are ready to be executed by the computer.
+Such executables are often created by compiling code written in a programming language
+such as C, C++, Java or Fortran.
+A special program called a *compiler* is used for this purpose.
+
+Programs can also be stored as **scripts**.
+These text files that are
+read by a program called an *interpreter*,
+which converts the script into instructions for the computer.
+
+Inside the `programs` folder,
+we have two scripts, a Python script called `hello.py` and a Bash script called `hello.sh`.
+We also some C source-code (`hello.c`), which we will compile into an executable.
+
+~~~
+[atrikut@login001 shell-basics]$ cd programs
+[atrikut@login001 programs]$ ls
+hello.c  hello.py hello.sh
+~~~
+
+### Running a Python script
+
+~~~
+[atrikut@login001 programs]$ python hello.py
+Hello from Python!
+~~~
+
+### Running a bash script
+
+~~~
+[atrikut@login001 programs]$ bash hello.sh
+Hello from Bash!
+~~~
+
+### Running a C program
+
+~~~
+[atrikut@login001 programs]$ gcc hello.c -o hello.out
+[atrikut@login001 programs]$ ./hello.out
+Hello from C!
+~~~
+
