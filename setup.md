@@ -4,186 +4,135 @@ title: Setup
 permalink: /setup/
 ---
 
-Our lesson template is kept in the `swcarpentry/styles` repository. The `styles` repository is carefully curated so that 
-changes made to it are easily mergable by downstream lessons. The `styles` repository contains various 
-bits that take Markdown files and render them as a lesson web page. For more information on how to develop 
-lessons and maintain them, see our [lesson-example](lesson-example). It will walk you through the basics of lesson 
-design and how to use GitHub, Markdown and Jekyll for lesson development. Follow the instructions below to make
-your own empty lesson in your own GitHub account. Once you've done that you can just write Markdown code and have 
-lesson web pages just like the [lesson-example](lesson-example) and all of our other lessons, but with your lesson content.
+## Logging-in to the cluster
 
-Requirements:
-* A GitHub account
-* A working python environment to run the lesson initialization script
-* (Optional) A local install of [Jekyll](https://jekyllrb.com/) which will require the Ruby language to be installed
+### Mac OS X and Linux users
 
-## Creating a New Lesson
+Mac OS X or Linux users may open a Terminal, and
+type in the following command:
 
-We will assume that your user ID is `timtomch` and the name of your
-new lesson is `data-cleanup`.
+~~~
+$ ssh username@login.palmetto.clemson.edu 
+~~~
+{: .bash}
 
-1.  We'll use the [GitHub's importer][importer] to make a copy of this repo in your own GitHub account.
-(Note: This is like a GitHub Fork, but not connected to the upstream changes)
+where `username` is your Clemson user ID.
+You will be prompted for both your password and DUO authentication.
 
-2.  **Put the URL of [the styles repository][styles]** (https://github.com/swcarpentry/styles) in the "Your 
-    old repository’s clone URL" box.
-    Do *not* use the URL of this repository,
-    as that will bring in a lot of example files you don't actually want.
+### Windows users
 
-3.  Select the owner for your new repository.
-    In our example this is `timtomch`,
-    but it may instead be an organization you belong to.
+Windows users will need to download the MobaXterm package from
+[here](<http://mobaxterm.mobatek.net/download.html>).
+After downloading and installing MobaXterm:
 
-4.  Choose a name for your lesson repository.
-    In our example, this is `data-cleanup`.
+1.  Launch the MobaXterm program
 
-5.  Make sure the repository is public.
+2.  On the top-left corner of MobaXterm, click the **Session** button. Select
+    the SSH setting and confirm that the following settings are set:
 
-6.  At this point, you should have a page like this:
+    Parameter           |   Value
+    --------------------|-------------------------------------
+    Remote host         | `login.palmetto.clemson.edu`
+    Port                |  22
+    X11-Forwarding      | enabled
+    Compression         | enabled
+    Remote environment  | Interactive shell
+    SSH-browser type    | **SCP (enhanced speed)**
 
-    ![]({{ page.root }}/fig/using-github-import.png)
+3.  Click **OK** and a new session window will be opened, where you will be
+    prompted for your Palmetto password and DUO authentication.
 
-    You can now click "Begin Import".
-    When the process is done,
-    you can click "Continue to repository" to visit your newly-created repository.
-    
-    Through the Github interface you can begin to edit and 
+After logging in, you should see the following **prompt** on the
+last line, indicating that you are logged-in to the `login001`
+node of the cluster, and that the shell is waiting for you
+type in a command:
 
-7.  If you want to work on the lesson from your local machine, you can 
-    now clone your newly-created repository to your computer:
+~~~
+[nelle@login001 ~]$
+~~~
+{: .bash}
 
-    ~~~
-    $ git clone -b gh-pages https://github.com/timtomch/data-cleanup.git
-    ~~~
-    {: .source}
+## Downloading workshop data
 
-    Note that the URL for your lesson will have your username and chosen repository name.
+We are going to download some files into our personal "home"
+directories from the web.
+The data is in the form of a
+`.zip` file which can be found at the following URL.
 
-8.  Go into that directory using:
+~~~
+https://github.com/clemsonciti/genomics-workshop/raw/gh-pages/data/genomics-workshop.zip
+~~~
 
-    ~~~
-    $ cd data-cleanup
-    ~~~
-    {: .source}
+Because we can't run a graphical web browser on the cluster,
+we need another way of downloading the `.zip` file.
+Fortunately, there is a command-line tool called `wget`
+that is meant for exactly this task.
 
-    Note that the name of your directory should be what you named your lesson 
-    on the example this is `data-cleanup`.
+~~~
+[nelle@login001 ~]$ wget https://github.com/clemsonciti/genomics-workshop/raw/gh-pages/data/genomics-workshop.zip
+~~~
+{: .bash}
 
-9. To be able to pull upstream style changes, you should manually add the 
-     styles repository as a remote called `template`:
+~~~
+[nelle@login001 ~]$ unzip genomics-workshop.zip
+Archive:  genomics-workshop.zip
+   creating: genomics-workshop/
+   creating: genomics-workshop/shell-basics/
+   creating: genomics-workshop/shell-basics/data/
+   creating: genomics-workshop/shell-basics/data/molecules/
+  inflating: genomics-workshop/shell-basics/data/molecules/cubane.pdb
+  inflating: genomics-workshop/shell-basics/data/molecules/ethane.pdb
+  inflating: genomics-workshop/shell-basics/data/molecules/methane.pdb
+  inflating: genomics-workshop/shell-basics/data/molecules/octane.pdb
+  inflating: genomics-workshop/shell-basics/data/molecules/pentane.pdb
+  inflating: genomics-workshop/shell-basics/data/molecules/propane.pdb
+   creating: genomics-workshop/shell-basics/data/pdb/
+.
+.
+.
+~~~
+{: .output}
 
-    ~~~
-    $ git remote add template https://github.com/swcarpentry/styles.git
-    ~~~
-    {: .source}
+Once you have downloaded the `.zip` file,
+you may "unzip" it using the `unzip` command:
 
-    This will allow you to pull in changes made to the template,
-    such as improvements to our CSS style files.
-    (Note that the user name above is `swcarpentry`, *not* `timtomch`,
-    since you are adding the master copy of the template as a remote.)
+~~~
+[nelle@login001 ~]$ unzip genomics-workshop.zip
+~~~
+{: .bash}
 
-10. Make sure you are using the `gh-pages` branch of the lesson template:
+~~~
+[nelle@login001 ~]$ unzip genomics-workshop.zip
+Archive:  genomics-workshop.zip
+   creating: genomics-workshop/
+   creating: genomics-workshop/shell-basics/
+   creating: genomics-workshop/shell-basics/data/
+   creating: genomics-workshop/shell-basics/data/molecules/
+  inflating: genomics-workshop/shell-basics/data/molecules/cubane.pdb
+  inflating: genomics-workshop/shell-basics/data/molecules/ethane.pdb
+  inflating: genomics-workshop/shell-basics/data/molecules/methane.pdb
+  inflating: genomics-workshop/shell-basics/data/molecules/octane.pdb
+  inflating: genomics-workshop/shell-basics/data/molecules/pentane.pdb
+  inflating: genomics-workshop/shell-basics/data/molecules/propane.pdb
+   creating: genomics-workshop/shell-basics/data/pdb/
+.
+.
+.
 
-    ~~~
-    $ git checkout gh-pages
-    ~~~
-    {: .source}
+~~~
+{: .output}
 
-	This will ensure that you are using the most "stable" version of the
-	template repository. Since it's being actively maintained by the
-	Software Carpentry community, you could end up using a development branch
-	that contains experimental (and potentially not working) features without
-	necessarily realising it. Switching to the `gh-branch` ensures you are
-	using the "stable" version of the template.
+Confirm that a new folder `genomics-workshop` has been created
+as a result of extracting the `genomics-workshop.zip` file:
 
-11. Run `bin/lesson_initialize.py` to create all of the boilerplate files
-    that cannot be put into the styles repository
-    (because they would trigger repeated merge conflicts).
+~~~
+[nelle@login001 ~]$ ls
+~~~
+{: .bash}
 
-12. Create and edit files as explained furhter in [the episodes of this lesson]({{ page.root }}/#schedule).
+~~~
+genomics-workshop  genomics-workshop.zip
 
-13. (requires Jekyll Setup from below) Preview the HTML pages for your lesson:
-
-    ~~~
-    $ make serve
-    ~~~
-    {: .source}
-
-14. Commit your changes *and the HTML pages in the root directory of
-    your lesson repository* and push to the `gh-pages` branch of your
-    repository:
-
-    ~~~
-    $ cd data-cleanup
-    $ git add changed-file.md changed-file.html
-    $ git commit -m "Explanatory message"
-    $ git push origin gh-pages
-    ~~~
-    {: .source}
-
-15. [Tell us][contact] where your lesson is so that we can add it to
-    the appropriate index page(s).
-
-**Note:**
-
-1.  SSH cloning (rather than the HTTPS cloning used above)
-    will also work for those who have set up SSH keys with GitHub.
-
-2.  Once a lesson has been created, please submit changes
-    for review as pull requests that contain *only the modified Markdown files*.
-    Do *not* submit generated HTML.
-
-3.  Some people have had intermittent errors during the import process,
-    possibly because of the network timing out.
-    If you experience a problem, please re-try;
-    if the problem persists,
-    please [get in touch][contact].
-
-
-## Setup Instructions for a specific existing lesson
-
-1.  Installation instructions for core lessons are included in
-    the [workshop template's home page][template],
-    so that they are all in one place.
-    The `setup.md` files of core lessons link to
-    the appropriate sections of the [workshop template page][workshop-repo].
-
-2.  Other lessons' `setup.md` include full installation instructions organized by OS
-    (following the model of the workshop template home page).
-
-## (Optional) Jekyll Setup for Lesson Development
-
-If you want to set up Jekyll
-so that you can preview changes on your own machine before pushing them to GitHub,
-you must install the software described below.
-(Note: Julian Thilo has written instructions for
-[installing Jekyll on Windows][jekyll-windows].)
-
-1.  **Ruby**.
-    This is included with Linux and Mac OS X;
-    the simplest option on Windows is to use [RubyInstaller][ruby-installer].
-    You can test your installation by running `ruby --version`.
-    For more information,
-    see [the Ruby installation guidelines][ruby-install-guide].
-
-2.  **[RubyGems][rubygems]**
-    (the package manager for Ruby).
-    You can test your installation by running `gem --version`.
-
-3.  **[Jekyll][jekyll]**.
-    You can install this by running `gem install jekyll`.
-
-4.  **R Packages**.
-    We use [knitr][cran-knitr], [stringr][cran-stringr], and [checkpoint][cran-checkpoint]
-    to format lessons written in R Markdown,
-    so you will need to install these to build R lessons
-    (and this example lesson).
-
-If you want to run `bin/lesson_check.py` (which is invoked by `make lesson-check`)
-you will need Jekyll (so that you have its Markdown parser, which is called Kramdown)
-and the [PyYAML][pyyaml] module for Python 3.
-
-{% include links.md %}
-
-
+~~~
+{: .output}
 
