@@ -2,11 +2,21 @@
 title: "Shell Basics"
 teaching: 15
 exercises: 15
+objectives:
+- "Understand that the shell can be used to do the same tasks as a graphical file browser"
+- "Learn to navigate the filesystem and create, remove, delete and move files and directories"
+- "Learn to use a command-line text editor like `nano`"
 questions:
 - "How do I view the files and folders in the filesystem?"
 - "How do I specify the location of a file or folder in the filesystem?"
 - "How do I create, delete, move and rename files and folders?"
 - "How do I create and edit text files?"
+keypoints:
+- "Use `cd`, `pwd` and `ls` to navigate the file system and inspect its contents"
+- "Use `cp`, `mv` and `rm` to copy, move and remove files or directories"
+- "Use `mkdir` and `touch` to create new empty directories and files respectively"
+- "The location of a file or folder, i.e., the *path* to the file or folder can be relative or absolute. An absolute path always starts from the root directory (`/`)"
+- "Text files can be created and edited from the command-line using an editor like `nano` or `vim`"
 ---
 
 The command-line or **shell** is another way of interacting with a computer,
@@ -184,7 +194,7 @@ We can confirm this using `pwd`:
 > Create a copy of the `genomics-workshop` directory
 > called `genomics-workshop-backup`.
 > In the original `genomics-workshop` directory,
-> remove all files beginning with the letter `c`
+> delete all files beginning with the letter `c`
 > in the folder `shell-basics/data/pdb`, i.e., the files:
 > 
 > ~~~
@@ -200,10 +210,8 @@ We can confirm this using `pwd`:
 > {: .bash}
 >
 > You can also use the asterisk (`*`) **wildcard** to generate a list of files that match a pattern,
-> for instance `*.txt* matches all files that end with the extension `.txt`.
+> for instance `*.txt` matches all files that end with the extension `.txt`.
 >
-{: .challenge}
-
 The word "path" is often used to refer to the location
 of a file or folder.
 Paths can be *relative* or *absolute*.
@@ -280,10 +288,11 @@ data  notes.txt  programs  solar.pdf
 The extension of a file (e.g., `.txt` or `.pdf`)
 is a *hint* to the user about the contents of that file.
 There is no requirement that filenames include an extension,
-and a file may be given any extension regardless of its contents
-(for example, you may rename a PDF file with an `.mp3` extension,
-but that will not transform it into a song!).
+and a file may be given any extension regardless of its contents.
+For example, you may rename a PDF file called `whale.pdf` to `whale.mp3`.
+This will not change the contents of the file or transform it into a beautiful whalesong!
 
+A related idea is the *type* of a file.
 Broadly speaking, files are of two types:
 
 1. **Text files** are files that contain data in human-readable
@@ -398,7 +407,7 @@ you can type the `Y` or `N` key respectively.
 > ~~~
 > {: .bash}
 > 
-> Create a new file `abstract.txt`,
+> Create a new file `abstract.txt` in your home directory,
 > containing a short abstract of your research.
 > Share with your neighbour.
 >
