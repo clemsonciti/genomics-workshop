@@ -88,8 +88,10 @@ genomics-workshop   genomics-workshop.zip
 > Always avoid using spaces in file and folder names.
 > To see why it's a bad idea, try running the following command:
 >
+> ~~~
 > [nelle@login001 ~]$ mkdir genomics workshop
-> 
+> ~~~
+>
 > Now, type `ls`. What do you see?
 >
 {: .callout}
@@ -212,6 +214,8 @@ We can confirm this using `pwd`:
 > You can also use the asterisk (`*`) **wildcard** to generate a list of files that match a pattern,
 > for instance `*.txt` matches all files that end with the extension `.txt`.
 >
+{: .challenge}
+
 The word "path" is often used to refer to the location
 of a file or folder.
 Paths can be *relative* or *absolute*.
