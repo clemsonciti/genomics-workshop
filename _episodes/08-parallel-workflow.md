@@ -105,4 +105,61 @@ export prefix=`basename $file .fastq`
 export outname="$prefix.trim.fq"
 ~~~
 
-Finally, Trimmomatic is run with the same command line we used before, but now we have the variables "$file" specifying the input, "$outname" specifying the output, and "$adapt" specifying the adapters.fasta file.  
+Finally, Trimmomatic is run with the same command line we used before, but now we have the variables "$file" specifying the input, "$outname" specifying the output, and "$adapt" specifying the adapters.fasta file. 
+
+# Bowtie2 (with multiple job scripts)
+Instead of writing a single loop that will process all files sequentially, you can take advantage of the many nodes available on Palmetto and submit a separate job for each file.  These will run simultaneously, thereby finishing faster than if they ran one after the other.  Note that you want to make sure you are requesting the appropriate resources for each individual job (and not taking up nodes that you don't need!).
+
+One potential drawback of this approach is that you actually have to write a separate PBS script for each input file.  This doesn't seem too bad for 4 files, but could become very time consuming for a large number of files.  To show you how you can automate this process, we will start with a template PBS script for running Bowtie2, and then we will run another shell script to search and replace filenames in order to make a new script for each input file.  The template script is bowtie2-aln.sh, so open it and look at how it is written:
+~~~
+[ecoope4@node0050 scripts]$ less bowtie2-aln.sh 
+#!/bin/bash
+#PBS -N bowAln
+#PBS -l select=1:ncpus=8:mem=11gb,walltime=2:00:00
+#PBS -j oe
+
+
+echo "START ------------------------------"
+
+module add bowtie2/2.1.0 
+
+src=/zfs/tillers/liz/workshop
+export srrname=TEMP_SRA
+export sample=TEMP_SAMPLE
+
+bowtie2 -p 8 -x $src/Reference/E_coli \
+        --rg-id  $srrname \
+        --rg "SM:$sample" \
+        -U "$src/Trimming/$srrname.trim.fq" \
+        -S "$src/Alignment/$srrname.sam"
+
+
+echo "FINISH ----------------------------"
+~~~
+
+In this script, you can see that we define 2 variables, $srrname and $sample, that are each given a "TEMP" value to start with.  These are the values we will replace to be different for each input file.  Since the rest of the script uses the variable names, these will point to the correct values every time.  The parameters for Bowtie2 are the same as we used on Day 1.
+
+The 2 values that we want to replace in this script are the SRA database ID for each file, and the Sample Name that corresponds to each ID.  These are given in a table from Day 1 describing the data, and are also provided in a text file called fileList.txt:
+~~~
+[ecoope4@login001 workshop]$ less fileList.txt 
+SRR098034       ZDB83
+SRR098035       ZDB87
+SRR098038       ZDB107
+SRR098039       ZDB111
+SRR098289       ZDB564
+~~~
+
+We are going to read in each line of this file, and then make a new PBS script with the corresponding SRA and Sample IDs for each line.  I also want to make sure that each new script that gets written has a new name (so I don't overwrite the same script over and over again).  We'll use a numeric "counter" variable, $x, to help us do this.  The loop for writing the new scripts is:
+~~~
+[ecoope4@node0050 workshop]$ export x=1
+[ecoope4@node0050 workshop]$ while read -r line
+> do
+> export sraID=`echo $line | cut -d" " -f1`
+> export sample=`echo $line | cut -d" " -f2`
+> sed "s/TEMP_SRA/$sraID/g" scripts/bowtie2-aln.sh >scripts/temp.sh
+> sed "s/TEMP_SAMPLE/$sample/g" scripts/temp.sh >"scripts/bowtie2.$x.sh"
+> let x=(x+1)
+> done <fileList.txt 
+~~~
+
+When this runs, you should have 5 new bowtie2 scripts.  Try using less to look at a couple of them, and check that the SRA ids and sample names have been changed correctly in each of them.  Now, you can submit each of these (you actually do NOT need to submit bowtie2.1.sh, since we ran this file yesterday) using the qsub command. 
