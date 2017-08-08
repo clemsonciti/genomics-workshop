@@ -85,3 +85,24 @@ done
 echo "FINISH ----------------------------"
 ~~~
 
+The Trimmomatic command itself is relatively unchanged from the command we ran on Day 1 in interactive mode (all of the parameter options are the same), but there are a few key pieces of this script that help with running the command effectively in a loop.  First, note these two lines:
+~~~
+src=/zfs/tillers/liz/workshop
+export adapt=$src/adapters.fasta
+~~~
+
+The first line saves a filepath to the variable "$src."  The second line uses that "$src" variable, and also points to the file with the adapters in it to save that whole file path as the variable "$adapt."  Both of these lines are optional (we could just call up the full file path every time we refer to any file), but you should notice how they help save space by avoiding having to type long file names later in the script.
+
+The next key piece:
+~~~
+for file in $src/Raw_Fastq/*.fastq
+~~~
+tells the loop to operate on EVERY file inside of the Raw_Fastq folder that ends with the ".fastq" extension.  Note the use of the "*" wildcard character, which will match anything coming before ".fastq."
+
+In order to automatically get a name for each of my output files that will correspond to the names of each input file, I first use the "basename" command, which will take off all of the extra path information before the file name itself.  Here, I am also specifying a suffix (.fastq), so that will be taken off by basename as well.  This will leave me with just my sample name, which I can use as a prefix for my output file name in the next line:
+~~~
+export prefix=`basename $file .fastq`
+export outname="$prefix.trim.fq"
+~~~
+
+Finally, Trimmomatic is run with the same command line we used before, but now we have the variables "$file" specifying the input, "$outname" specifying the output, and "$adapt" specifying the adapters.fasta file.  
