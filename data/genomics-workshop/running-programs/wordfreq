@@ -5,25 +5,42 @@ import string
 from collections import Counter
 import argparse
 import time
+import multiprocessing
+
+def merge_dicts(d1, d2):
+    return dict(Counter(d1) + Counter(d2))
+
+def word_count(fname):
+    with open(fname) as f:
+        data = f.read()
+
+    data_without_punctuation = data.translate(None, string.punctuation)
+    data_without_newlines = ' '.join(data_without_punctuation.split('\n'))
+    data_without_newlines = data_without_newlines.lower()
+    data_as_string_list = data_without_newlines.split(' ')
+
+    c = Counter(data_as_string_list)
+    time.sleep(5)
+    return dict(c)
 
 parser=argparse.ArgumentParser()
-parser.add_argument('fname', type=str, help='Input file name')
+parser.add_argument('-j', type=int, default=1, help='Number of tasks to use')
+parser.add_argument('files', type=str, help='Input files', nargs='+')
 
 args = parser.parse_args()
-fname = args.fname
+files = args.files
+jobs = args.j
 
-with open(fname) as f:
-    data = f.read()
+results = []
 
-data_without_punctuation = data.translate(None, string.punctuation)
-data_without_newlines = ' '.join(data_without_punctuation.split('\n'))
-data_without_newlines = data_without_newlines.lower()
-data_as_string_list = data_without_newlines.split(' ')
+pool = multiprocessing.Pool(jobs)
+results = pool.map(word_count, files)
+pool.close()
+pool.join()
 
-c = Counter(data_as_string_list)
-word_freqs = c.most_common()
+word_freqs = {}
+for result in results:
+    word_freqs = merge_dicts(word_freqs, result)
 
-time.sleep(10)
-
-for word, count in word_freqs:
-    print("{} {}".format(count, word))
+for word in word_freqs:
+    print("{} {}".format(word_freqs[word], word))
