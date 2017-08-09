@@ -26,6 +26,48 @@ $ ls
 wordfreq     words-1.txt       words-2.txt       words-3.txt       words-4.txt
 ~~~
 
+Use the `-l` switch to see a detailed, long list of the files and directories:
+
+~~~
+ls -l
+~~~
+
+~~~
+total 72
+-rwxr--r--  1 nelle  cuuser   695 Jul 26 09:14 wordfreq
+-rw-r--r--  1 nelle  cuuser  1389 Jul 20 14:40 words-1.txt
+-rw-r--r--  1 nelle  cuuser  2573 Jul 20 14:40 words-2.txt
+-rw-r--r--  1 nelle  cuuser  8715 Jul 20 14:41 words-3.txt
+-rw-r--r--  1 nelle  cuuser  9319 Jul 20 14:41 words-4.txt
+~~~
+
+Among other information, such as the
+owner of the files (`nelle`), the "user group" that the files belong to (`cuuser`),
+the last accessed time, etc.,
+the first column of the output shows you
+the **permissions** that different entitites have for each file.
+
+A permission of `-rwxr--r--` means:
+
+* The first column `-` means the object is a regular file, for directories,
+this column would hold a `d`.
+* The next three columns `rwx` tell us what permission the owner of the file has.
+In this case, the owner of the file may **read** (`r`), **write** (`w`),
+and **execute** (`x`) the file.
+While reading/writing applies to any kind of file,
+execution only applies to scripts or compiled programs.
+Such files are thusly named **executables**.
+* The following three columns `r--` tell us what permission the members of
+the user group associated with the file have.
+In this case, members of the `cuuser` group may **read** (`r`) the file only.
+They may not write to it (change its contents).
+* The final three columns `---` tell us what permissions everybody else has.
+In this case, users that are not part of the `cuuser` group
+may not read or write to the file at all.
+
+To run an executable, you can usually just type in
+the path to it:
+
 ~~~
 $ ./wordfreq
 usage: wordfreq [-h] fname
