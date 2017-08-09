@@ -14,9 +14,25 @@ keypoints:
 The shell is more than a way to
 create and work with files and folders;
 it's also a powerful way to interact with programs.
+Most programs that you are familiar with,
+for example Microsoft Word or Mozilla Firefox
+are *graphical* in nature, i.e., you use
+menus, icons, text boxes, and other graphical elements
+to control these programs.
+
+Most fields in scientific computing (including computational biology)
+are however dominated by command-line programs.
+
+Many programs have **both** a command-line and a graphical interface.
+
 Running and controlling programs via the command-line rather than a GUI
 improves the repeatability and reproducibility of your work,
-and allows you to automate dull tasks.
+and allows you to automate them.
+In this next part of the lesson,
+we'll run a simple command-line program (called `wordfreq`).
+Given a text file containing several words,
+this program counts the frequency of each word,
+and prints the result.
 
 Navigate to the directory `genomics-workshop/running-programs/`,
 and view the files there:
@@ -65,6 +81,7 @@ They may not write to it (change its contents).
 In this case, users that are not part of the `cuuser` group
 may not read or write to the file at all.
 
+We see that we have execute `x` permission on the `wordfreq` program.
 To run an executable, you can usually just type in
 the path to it:
 
