@@ -3,10 +3,9 @@ title: "Running programs using the shell"
 teaching: 15
 exercises: 15
 objectives:
+- "Understand file and folder permissions"
 - "Learn how to run a program using the shell"
-- "Learn to redirect standard output to a file, or to another program"
-- "Learn to write a loop to run the same program on many input data"
-- "Learn to write a shell script"
+- "Learn to redirect the output of a program to a file, or to another program"
 questions:
 keypoints:
 ---
@@ -38,15 +37,17 @@ Navigate to the directory `genomics-workshop/running-programs/`,
 and view the files there:
 
 ~~~
-$ ls
+[nelle@login001 running-programs]$ ls
 wordfreq     words-1.txt       words-2.txt       words-3.txt       words-4.txt
 ~~~
+{: .bash}
 
 Use the `-l` switch to see a detailed, long list of the files and directories:
 
 ~~~
-ls -l
+[nelle@login001 running-programs]$ ls -l
 ~~~
+{: .bash}
 
 ~~~
 total 72
@@ -86,71 +87,351 @@ To run an executable, you can usually just type in
 the path to it:
 
 ~~~
-$ ./wordfreq
-usage: wordfreq [-h] fname
-wordfreq: error: too few arguments
+[nelle@login001 running-programs]$ ./wordfreq
 ~~~
+{: .bash}
 
 ~~~
-$ ./wordfreq words-1.txt
+usage: wordfreq [-h] [-j N] files [files ...]
+wordfreq: error: the following arguments are required: files
+~~~
+{: .error}
+
+
+We find that our command doesn't complete successfully and that we receive an *error*.
+Running into errors is very common when using the command-line.
+A common source of errors, for example, is making spelling mistakes when typing out commands.
+But this error is different; the shell is telling us that we are missing a required argument
+to the `wordfreq` program called `files`. We can learn more about this by
+asking for help on how to use wordfreq correctly:
+
+~~~
+[nelle@login001 running-programs]$ ./wordfreq --help
+~~~
+{: .bash}
+
+~~~
+usage: wordfreq [-h] [-j N] files [files ...]
+
+Print word frequency for one or more text files. Removes all punctuation and
+converts words to lowercase before counting.
+
+positional arguments:
+  files       Input files
+
+optional arguments:
+  -h, --help  show this help message and exit
+  -j N        Number of tasks to use
+
+~~~
+{: .output}
+
+The output may seem cryptic at first, so let's break it down:
+
+~~~
+usage: wordfreq [-h] [-j N] files [files ...]
+~~~
+
+This line gives us a **lot** of information.
+It tells us what arguments may be provided to the `wordfreq` program,
+which of them are optional and which are required.
+
+Optional arguments (not required) are shown in square brackets (e.g., `[-j N]`).
+The remaining arguments (not in square brackets) are **positional** or **required** arguments.
+
+Here, we have two optional arguments `-h` and `-j`; and one positional argument `files`.
+
+Some arguments like `-j` must be followed by a value (indicated by `N` here).
+Other arguments like `-h` do not have a value associated with them.
+When a value is of the form `[abc ...]`, it indicates that
+it can be a **list** of space-separated values.
+Here, the positional argument `files` can be a list of values.
+
+When specifying optional arguments, you must specify both the
+name of the argument (e.g., `-j`) and the value after it.
+For positional arguments, you only specify the value.
+
+Lastly, the values for positional arguments must be specified in the same order
+they appear in the help text above (thus the name *positional*).
+
+The next two lines are a description of what the `wordfreq` program does:
+
+~~~
+Print word frequency for one or more text files. Removes all punctuation and
+converts words to lowercase before counting.
+~~~
+
+And the following lines describe each of the arguments:
+
+~~~
+positional arguments:
+  files       Input files
+
+optional arguments:
+  -h, --help  show this help message and exit
+  -j N        Number of tasks to use
+~~~
+
+Now that we know exactly how to specify the arguments
+to `wordfreq`, let's try again, and this time provide
+the value for the positional argument `files`:
+
+~~~
+[nelle@login001 running-programs]$ ./wordfreq words-1.txt
+~~~
+{: .bash}
+
+~~~
+1 replied
+1 
+1 all
+1 just
+1 agreed
+2 by
+2 four
+1 fine
+1 before
+1 cried
+1 had
+1 young
+1 day
+8 to
+.
+.
+.
+~~~
+{: .output}
+
+Because `files` can be a **list** of values, let's try with two files:
+
+~~~
+[nelle@login001 running-programs]$ ./wordfreq words-1.txt words-2.txt
+~~~
+{: .bash}
+
+~~~
+2 
+2 all
+1 consider
+1 agreed
+3 four
+4 go
+1 fine
+1 children
+5 one
+1 certainly
+1 just
+2 young
+2 send
+1 should
+19 to
+1 only
+1 consent
+.
+.
+.
+~~~
+{: .output}
+
+So far, all the commands we have entered print their output
+to the terminal screen.
+Sometimes, it's beneficial to store this output somewhere (i.e., in a file).
+We can do this easily using the *redirection* operator `>`.
+
+~~~
+[nelle@login001 running-programs]$ ./wordfreq words-1.txt > count-words-1.txt
+~~~
+{: .bash}
+
+Above, we *redirect* the output of the command `./wordfreq words-1.txt` to the file `count-words-1.txt`.
+That's why we don't see any output.
+Look at the file `count-words-1.txt`:
+
+~~~
+[nelle@login001 running-programs]$ cat count-words-1.txt 
+~~~
+{: .bash}
+
+~~~
+1 replied
+1 
+1 all
+1 just
+1 agreed
+2 by
+2 four
+1 fine
+1 before
+1 cried
+1 had
+1 young
+1 day
+8 to
+.
+.
+.
+~~~
+{: .output}
+
+One typical application of a program like `wordfreq` is to find out the
+most frequently occurring word(s) in a file.
+To obtain this information, we can re-order the output of `wordfreq`
+such that we get the most common words at the top of the output,
+and the least common words at the bottom.
+
+The `sort` command helps us do this reordering:
+
+~~~
+[nelle@login001 running-programs]$ sort -n count-words-1.txt
+~~~
+{: .bash}
+
+~~~
+1 
+1 about
+1 acknowledged
+1 agreed
+1 all
+1 answer
+1 are
+1 at
+1 been
+1 before
+1 bingley
+1 but
+1 came
+1 chaise
+1 considered
+1 cried
+1 daughters
+1 day
+1 delighted
+.
+.
+.
+5 his
+5 in
+6 he
+6 it
+8 that
+8 the
+8 to
+9 is
+11 a
+11 of
+~~~
+{: .output}
+
+We can sort in *reverse* mode using `sort -r`:
+
+~~~
+[nelle@login001 running-programs]$ sort -n -r count-words-1.txt
+~~~
+{: .bash}
+
+In the above exercise,
+we ran `wordfreq` on our input data, saving the intermediate result to a file;
+and then ran `sort` on the file to get the final result.
+As it turns out, we don't have to do this.
+The shell makes it very convenient for programs to
+communicate between themselves.
+Using the pipe `|` character,
+we can directly send the result of the `wordfreq` program
+to the `sort` program:
+
+~~~
+[nelle@login001 running-programs]$ ./wordfreq input-1.txt | sort -n -r
+~~~
+{: .bash}
+
+~~~
 11 of
 11 a
 9 is
 8 to
-8 that
 8 the
-6 he
+8 that
 6 it
-5 his
-5 and
+6 he
 5 in
-4 be
-4 or
-4 mr
-4 single
+5 his
+.
+.
+.
+.
+1 but
+1 bingley
+1 before
+1 been
+1 at
+1 are
+1 answer
+1 all
+1 agreed
+1 acknowledged
+1 about
+1 
 ~~~
+{: .output}
+
+The pipe character takes the result of the command on its left,
+and redirects it as input to the command on its right.
+Thus, we get the final, re-ordered output using a single command:
 
 ~~~
-$ ./wordfreq words-1.txt > count-words-1.txt
+11 of
+11 a
+9 is
+8 to
+8 the
+8 that
+6 it
+6 he
+5 in
+5 his
+.
+.
+.
+.
+1 but
+1 bingley
+1 before
+1 been
+1 at
+1 are
+1 answer
+1 all
+1 agreed
+1 acknowledged
+1 about
+1 
 ~~~
+{: .output}
 
-~~~
-echo name
-echo $name
-name=newton
-echo $name
-~~~
+> ## Pipes
+> 
+> We want to write a single command that will print
+> out the 3 most frequently occurring words
+> in the file `words-1.txt`.
+> We know that the following command will print
+> the count for all words in reverse-sorted order:
+>
+> ~~~
+> ./wordfreq input-1.txt | sort -n -r
+> ~~~
+> {: .bash}
+>
+> What would you add to the above command to
+> make it print only the 3 most common words?
+>
+>
+> Hint: you will need to *pipe* the result
+> of the above command to another program:
+>
+> ~~~
+> ./wordfreq input-1.txt | sort -n -r | ______
+> ~~~
+> {: .bash}
+>
+{: .challenge}
 
-~~~
-name=einstein
-echo $name
-~~~
-
-~~~
-for name in einstein newton tesla
-do
-echo $name
-echo name
-done
-~~~
-
-~~~
-for file in *.txt
-do
-echo $file
-done
-~~~
-
-~~~
-$ ./wordfreq words-1.txt > count-words-1.txt
-$ ./wordfreq words-2.txt > count-words-2.txt
-$ ./wordfreq words-3.txt > count-words-3.txt
-$ ./wordfreq words-4.txt > count-words-4.txt
-~~~
-
-~~~
-for file in words-*.txt
-do
-./wordfreq $file > count-$file
-done
-~~~
