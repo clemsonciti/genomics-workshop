@@ -7,7 +7,18 @@ objectives:
 - "Learn how to run a program using the shell"
 - "Learn to redirect the output of a program to a file, or to another program"
 questions:
+- "How can I run a program from the shell?"
+- "How can I save the result of a program?"
+- "How can I combine programs together?"
 keypoints:
+- "All files and folders have an owner (a user) and a group (a collection of users) associated
+with them"
+- "Files and folders can have read (`r`), write (`w`) and execute (`x`) permissions
+for the file owner, members of the group associated with the file, and for all users"
+- "Executable files can be run by providing the path to the file on the command line"
+- "The output of a command can be redirected to a file using `>`, or to another program
+using `|`"
+- "You can sort text using the `sort` command"
 ---
 
 The shell is more than a way to
