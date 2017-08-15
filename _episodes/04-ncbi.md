@@ -125,5 +125,5 @@ GTTCGCCAAGTTCATTGGCAGAGGGAGCCAACAGAC
 
 # Exercise
 Write a PBS job script that will run prefetch and then fastq-dump on the remaining 4 SRR IDs listed in the Data Set table. 
-..* _Remember to include the module load sratoolkit/2.8.2-1 command at the beginning of your script_
+*	_Remember to include the module load sratoolkit/2.8.2-1 command at the beginning of your script_
 Submit your job script using `qsub` so that it can run while we are doing the next module (it will take about 40 minutes to complete on all files). 
