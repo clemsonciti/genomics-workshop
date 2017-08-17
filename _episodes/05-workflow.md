@@ -116,7 +116,7 @@ Very similar to the previous test, except with Kmers the sequences do not have t
 
 Barcode sequences in multiplex libraries can also show up here.
 
-![kmer](../figs/fastqc_stats10.png)
+![kmer](../fig/fastqc_stats10.png)
 
 # Trimming
 Trimmomatic will clean up the raw sequencing data by removing any reads or parts of reads that fall below a specified quality threshold, and also by checking for and removing adapter sequences left over from the Illumina library construction.
