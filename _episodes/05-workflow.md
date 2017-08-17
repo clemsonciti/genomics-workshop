@@ -18,7 +18,7 @@ A variant calling workflow starts with raw sequencing data for multiple individu
 On Day 1, we will only be working with a single file to start with, so we will *not* do Step 5, part 2 (yet).  On Day 2, after we have looked at running those same steps in parallel on all of the other raw data files, we will complete the last part of the pipeline to get the final VCF file.
 
 # FastQC
-To use the program FastQC, we need to make sure that we are logged onto palmetto with X11 forwarding (or the Windows equivalent):
+FastQC is a program that can check the quality of any fastq file output from a next-gen sequencer, so it is not specific to the SNP calling pipeline.  To use this program, we need to make sure that we are logged onto palmetto with X11 forwarding (or the Windows equivalent):
 ~~~
 ssh -X ecoope4@user.palmetto.clemson.edu
 ~~~
@@ -36,7 +36,87 @@ fastqc
 
 This will open up an X11 window with the FastQC startup window.  From the File menu, select Open, and then navigate to the SRR098034.fastq file in your genomics-workshop/Raw_Fastq folder.
 
-FastQC checks multiple aspects of the raw data: (list these later)
+FastQC runs 12 different checks on various metrics that might be related to quality of the data.  It will alert you when any of the checks fail or produce questionable results.  One thing to remember: FastQC was written with whole genome resequencing data in mind, so it expects lots of randomly sheared fragments representative of the whole genome.  If you run FastQC on non-random data (i.e. RNA-seq, CHiP-seq, GBS, target Amplicon), you may get several failed tests, but this does NOT necessarily mean your data are bad, just that they don't look like WGS data.
+
+## Per Base Sequence Quality
+
+Shows the ranges of quality values across the length of all sequences in the Fastq file.  X-axis is position with a sequence/read, y-axis is the Phred scale quality score.  It is common to see lower quality values towards the ends of reads.  Looking at this plot will give you a good idea of how much trimming you will need to do in Step 2.  
+
+![seqQual](../fig/fastqc_stats1.png)
+
+## Per tile sequence quality
+
+Shows the spatial distribution of mean qualities across the Illumina flow cell.  This test will let you know if there was something wrong with the equipment during sequencing that created a systematic bias.  If you do your own sequencing in-house, then this test could be important.  If you out source your sequencing to another facility, then they should have checked this before ever sending you the results, so you should be unlikely to see a failure here.
+
+![tile](../fig/fastqc_stats2.png)
+
+## Per Sequence Quality Score
+
+This check calculates the average quality for each read (over all bases), and then reports the frequency distribution for the mean qualities in your sample.  The x-axis is the range of possible Phred scale quality scores (1-40), and the y-axis is the number of sequences with that mean quality score.  This test lets you see if there is a subset of reads in your sample that have universally low quality values.
+
+![avgQual](../fig/fastqc_stats3.png)
+
+## Per Base Sequence Content
+
+A plot of the percentage of each of the 4 bases (A,C,G,T) found at every position across all of the reads in your sample.  The x-axis is position within a read; the y-axis is the percentage of reads with a particular base at that position; the colors indicate each different base.
+
+The purpose of this test is to check the randomness of your library (FastQC expects that the percentage of each base should be roughly equal across all positions).  If you have non-random data, this is one of those tests that will fail, even though your data are fine.  Note that exome or RNA-seq would have elevated GC content, which would affect this test.
+
+If you did expect the data to be random, and this test fails, it could indicate either PCR bias (a library prep problem) or sequencing bias.
+
+![baseCont](../fig/fastqc_stats4.png)
+
+## Per Base GC content
+
+Very similar to the per base sequence content test, this check looks at the %GC at each position in a read across all reads in the sample.  A random library would have a horizontal line (same GC content across all bases) at whatever percentage value reflects the GC content of the reference genome.  A failure in this test can be interpreted the same as the per base sequence content test.
+
+![baseGC](../fig/fastqc_stats5.png)
+
+## Per Sequence GC content
+
+First, FastQC calculates a theoretical distribution of GC content by using the empirical percentage of GC in your data, and assuming it is normally distributed.  Then, the red line plots the  actual per read %GC.  If the red line and blue line do not match up, then some subset of your reads are showing a bias that could indicate some kind of contamination or PCR bias.
+
+Even in non-random data, this test should not fail, because the theoretical distribution is calculated on your underlying data.
+
+![seqGC](../fig/fastqc_stats6.png)
+
+## Per base N content
+
+Plots the percentage of missing data (represented by N) at each position in the sequence across all reads.  At the very end or the very beginning of a read, it is not all that unusual to see some small proportion of Ns (and this would indicate a need for read trimming in Step 2), but in general this line should be at or near the bottom of the graph.  If this test fails, it could indicate that your library was bad, or that the sequencing run essentially failed for some other reason.
+
+![baseN](../fig/fastqc_stats7.png)
+
+## Sequence Length Distribution
+
+This test generates a graph showing the distribution of fragment sizes in your data.  X-axis is the range of possible read lengths in base pairs; y-axis is the number of reads with that length.  For raw Illumina data, all of your reads should be exactly the same length, so you will just get a sharp peak and not a real distribution here.  Some other platforms may generate reads of multiple lengths, and after you run a trimming program you might see reads of multiple lengths as well.
+
+The test will fail if there is any difference in read length, but note again that you may or may not expect some differences depending on where your data came from.  One reason to pay attention to this flag is because some alignment programs won't accept data with multiple lengths, so you would want to trim all of your reads to the same length before running these.
+
+![seqLen](../fig/fastqc_stats8.png)
+
+## Duplicate Sequences
+
+The module counts the number of times a particular sequence appears in your data set, and plots the relative number of sequences with each level of duplication.  The x-axis is the number of possible duplicates, and the y-axis is the number of sequences with that many copies.
+
+In random data, as well as only pseudo-random data (RNA-seq, exome), most sequences should occur only once, so you should see a sharp peak on the left followed by exponential decay.  If you have very high coverage, you might see a low level of duplication; otherwise a high level of duplication would indicate PCR bias.
+
+If you run FastQC on amplicon data or GBS, this test may fail, since you expect to have high copy numbers of the same sequence.
+
+![seqDup](../fig/fastqc_stats9.png)
+
+## Overrepresented Sequences
+
+For any sequences that make up more that 0.1% of the total data, this check will list them and check them against known contaminants.  Contaminating sequence could come from microbes, or even from an excess of unincorporated Illumina adapters in your sample.  Even if there is no match for the overrepresented sequences, this test still reports them (since it could indicate some other contaminant or library issue).
+
+If you run FastQC on a GBS library, which has restriction enzyme recognition sites in every sequence, or on CHiP-seq, which likely has common recognition motifs, there is a good chance this test will fail, even though your data are fine.  
+
+## Overrepresented Kmers
+
+Very similar to the previous test, except with Kmers the sequences do not have to be exact matches to be considered duplicated, they just have to be very similar.  This helps detect contamination and PCR bias even when errors and missing data cause sequences to not be identical.
+
+Barcode sequences in multiplex libraries can also show up here.
+
+![kmer](../figs/fastqc_stats10.png)
 
 # Trimming
 Trimmomatic will clean up the raw sequencing data by removing any reads or parts of reads that fall below a specified quality threshold, and also by checking for and removing adapter sequences left over from the Illumina library construction.
