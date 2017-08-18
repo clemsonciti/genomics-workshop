@@ -142,10 +142,10 @@ TRAILING:20 MINLEN:30 AVGQUAL:30
 + SE : Specifies Single End read (vs. paired end)
 + phred33 : Version of Illumina quality encoding (vs. phred64)
 + ILLUMINACLIP:adapters.fasta:2:30:10 - Cut illumina-specific adapter sequences from the read.  
-..* Adapter sequences are given in the file adapters.fasta.  
-..* 2 is the maximum number of mismatches to allow when searching for the adapters in the sequences (w/out affecting the match score).  
-..* 30 is the palindrome clip threshold, which specifies the minimum match score for paired end adapters.  
-..* 10 is the minimum match score for adapters in single end reads.
+  * Adapter sequences are given in the file adapters.fasta.  
+  * 2 is the maximum number of mismatches to allow when searching for the adapters in the sequences (w/out affecting the match score).  
+  * 30 is the palindrome clip threshold, which specifies the minimum match score for paired end adapters.  
+  * 10 is the minimum match score for adapters in single end reads.
 + TRAILING:20 : Removes bases starting at the end of the sequence if they fall below a certain quality threshold (in this case, we set the threshold at 20).
 + MINLEN:30 : After removing low quality bases, discard all reads that fall below a certain length (in this case 30 bp).
 + AVGQUAL:30 : Remove reads falling below an average quality threshold (in this case 30)
