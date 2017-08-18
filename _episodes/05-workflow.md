@@ -1,7 +1,7 @@
 ---
 title: "Variant calling workflow"
 teaching: 20
-exercises: 1
+exercises: 2
 ---
 
 # Overview
@@ -150,6 +150,9 @@ TRAILING:20 MINLEN:30 AVGQUAL:30
 + MINLEN:30 : After removing low quality bases, discard all reads that fall below a certain length (in this case 30 bp).
 + AVGQUAL:30 : Remove reads falling below an average quality threshold (in this case 30)
 
+## Exercise 1
+Run FastQC on the cleaned .fq file from the Trimmomatic output.  Can you tell that the trimming step has made a difference?  Which tests in FastQC look the most different compared to the original?
+
 # Mapping to the Reference Genome
 For the sample data used in this workshop, we will be mapping everything to the genome of *E.coli* strain REL606.  The fasta file for this genome has already been provided to you, but it was originally downloaded from [Ensembl](http://www.ensembl.org/index.html), which is an excellent resource for many publicly available genomes.  
 
@@ -192,7 +195,7 @@ samtools dict -o Reference/Ecoli_Ref.dict Reference/Ecoli_Ref.fa
 ~~~
 
 # GATK HaplotypeCaller
-The final task for Day 1 is to run the GATK HaplotypeCaller to generate a .gvcf file for our first individual. This file will be used on Day 2, once we have also created the .gvcf files for the 4 other individuals, to generate the final VCF file.
+The final task for Day 1 is to run the GATK HaplotypeCaller to generate a .gvcf file for our first individual. This file will be used on Day 2, once we have also created the .gvcf files for the 4 other individuals, to generate the final VCF file.  You can also check out the [GATK Best Practices](https://software.broadinstitute.org/gatk/best-practices/bp_3step.php?case=GermShortWGS) for a nice overview and detailed explanation of the variant calling pipeline.
 
 [GATK](https://software.broadinstitute.org/gatk/), like Samtools, has a lot of uses and functions in additions to the ones we will use in this workshop.  It is one of the most commonly used programs for variant calling (even though there are many others), which is why we are using it here.  To run the HaplotypeCaller:
 
@@ -216,4 +219,20 @@ java -jar GenomeAnalysisTK.jar -T HaplotypeCaller \
 + variant_index_type LINEAR: Index creation is something GATK does to help for fast searching a processing in other steps.  LINEAR specifies the type of index to create.  You shouldn't ever need to mess with this parameter.
 + variant_index_parameter 128000: This specifies the size of the "bins" to use when indexing the data.  It again is not something you really need to mess with.
 + ploidy 1: Sample ploidy (number of chromosome copies per individual).  GATK uses this information when estimating genotype likelihoods, based on expected allele frequencies.  Because E. coli is haploid, we set this value to 1.  
+
+## Exercise 2
+Now that you've seen what the command line looks like for a couple of Samtools functions, you should have a general idea of how to run any of the tools in Samtools.  Try running the tool "flagstat" to get some general statistics about your bam file.  To see the options for any samtools command, all you have to do is type the command name with no options:
+
+~~~
+$ module load samtools/1.4
+$ samtools flagstat
+Usage: samtools flagstat [options] <in.bam>
+      --input-fmt-option OPT[=VAL]
+               Specify a single input file format option in the form
+               of OPTION or OPTION=VALUE
+  -@, --threads INT
+               Number of additional threads to use [0]
+~~~
+
+Or, you can check the [Samtools Manual](http://www.htslib.org/doc/samtools.html) online.  For interpreting the results of flagstat, check out [this page](https://davetang.org/wiki/tiki-index.php?page=SAMTools) describing several samtools options in more detail and with examples.
 
