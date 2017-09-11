@@ -193,7 +193,7 @@ samtools dict -o Reference/Ecoli_Ref.dict Reference/Ecoli_Ref.fa
 # GATK HaplotypeCaller
 The final task for Day 1 is to run the GATK HaplotypeCaller to generate a .gvcf file for our first individual. This file will be used on Day 2, once we have also created the .gvcf files for the 4 other individuals, to generate the final VCF file.  You can also check out the [GATK Best Practices](https://software.broadinstitute.org/gatk/best-practices/bp_3step.php?case=GermShortWGS) for a nice overview and detailed explanation of the variant calling pipeline.
 
-[GATK](https://software.broadinstitute.org/gatk/), like Samtools, has a lot of uses and functions in additions to the ones we will use in this workshop.  It is one of the most commonly used programs for variant calling (even though there are many others), which is why we are using it here.  To run the HaplotypeCaller:
+[GATK](https://software.broadinstitute.org/gatk/), like Samtools, has a lot of uses and functions in addition to the ones we will use in this workshop.  It is one of the most commonly used programs for variant calling (even though there are many others), which is why we are using it here.  To run the HaplotypeCaller:
 
 ~~~
 module load java/1.8.0
@@ -210,11 +210,11 @@ java -jar GenomeAnalysisTK.jar -T HaplotypeCaller \
 ~~~
 
 **Details on GATK Parameters:**
-+ T HaplotypeCaller: This specifies that the particular GATK tool we want to use is the HaplotypeCaller.
-+ ERC GVCF: ERC stands for Emit Reference Confidence.  This means we want the program to estimate the probability of a given genotype being the reference base at each site in the file.  GVCF mode tells the program to output every site in the genome (whether or not there appears to be a mutation).  This is necessary for merging genotype information across multiple samples later.
-+ variant_index_type LINEAR: Index creation is something GATK does to help for fast searching a processing in other steps.  LINEAR specifies the type of index to create.  You shouldn't ever need to mess with this parameter.
-+ variant_index_parameter 128000: This specifies the size of the "bins" to use when indexing the data.  It again is not something you really need to mess with.
-+ ploidy 1: Sample ploidy (number of chromosome copies per individual).  GATK uses this information when estimating genotype likelihoods, based on expected allele frequencies.  Because E. coli is haploid, we set this value to 1.  
++ `-T HaplotypeCaller`: This specifies that the particular GATK tool we want to use is the HaplotypeCaller.
++ `-ERC GVCF`: ERC stands for Emit Reference Confidence.  This means we want the program to estimate the probability of a given genotype being the reference base at each site in the file.  GVCF mode tells the program to output every site in the genome (whether or not there appears to be a mutation).  This is necessary for merging genotype information across multiple samples later.
++ `-variant_index_type LINEAR`: Index creation is something GATK does to help for fast searching a processing in other steps.  LINEAR specifies the type of index to create.  You shouldn't ever need to mess with this parameter.
++ `-variant_index_parameter 128000`: This specifies the size of the "bins" to use when indexing the data.  It again is not something you really need to mess with.
++ `-ploidy 1`: Sample ploidy (number of chromosome copies per individual).  GATK uses this information when estimating genotype likelihoods, based on expected allele frequencies.  Because E. coli is haploid, we set this value to 1.  
 
 ## Exercise 2
 Now that you've seen what the command line looks like for a couple of Samtools functions, you should have a general idea of how to run any of the tools in Samtools.  Try running the tool "flagstat" to get some general statistics about your bam file.  To see the options for any samtools command, all you have to do is type the command name with no options:
