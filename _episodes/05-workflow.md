@@ -10,7 +10,7 @@ A variant calling workflow starts with raw sequencing data for multiple individu
 1. Using FastQC to verify the quality of each raw data file.
 2. Removing low quality and spurious sequences (Trimmomatic).
 3. Mapping individual sequences to a reference genome (Bowtie2)
-4. Convert SAM files produces in Step 3 to BAM format files, then sort and index them (Samtools)
+4. Convert SAM files produced in Step 3 to BAM format files, then sort and index them (Samtools)
 5. Perform variant calling on the sorted BAM files (GATK)
 	1. Get genotypes in GVCF format for each individual (GATK HaplotypeCaller)
 	2. Perform joint genotyping across all .gvcf files to get the final VCF file for the population (GATK GenotypeGVCFs)
@@ -36,19 +36,13 @@ fastqc
 
 This will open up an X11 window with the FastQC startup window.  From the File menu, select Open, and then navigate to the SRR098034.fastq file in your genomics-workshop/Raw_Fastq folder.
 
-FastQC runs 12 different checks on various metrics that might be related to quality of the data.  It will alert you when any of the checks fail or produce questionable results.  One thing to remember: FastQC was written with whole genome resequencing data in mind, so it expects lots of randomly sheared fragments representative of the whole genome.  If you run FastQC on non-random data (i.e. RNA-seq, CHiP-seq, GBS, target Amplicon), you may get several failed tests, but this does NOT necessarily mean your data are bad, just that they don't look like WGS data.
+In addition to calculating some basic statistics about each file, FastQC runs 10 different checks on various metrics that might be related to quality of the data.  It will alert you when any of the checks fail or produce questionable results.  One thing to remember: FastQC was written with whole genome resequencing data in mind, so it expects lots of randomly sheared fragments representative of the whole genome.  If you run FastQC on non-random data (i.e. RNA-seq, CHiP-seq, GBS, target Amplicon), you may get several failed tests, but this does NOT necessarily mean your data are bad, just that they don't look like WGS data.
 
 ## Per Base Sequence Quality
 
-Shows the ranges of quality values across the length of all sequences in the Fastq file.  X-axis is position with a sequence/read, y-axis is the Phred scale quality score.  It is common to see lower quality values towards the ends of reads.  Looking at this plot will give you a good idea of how much trimming you will need to do in Step 2.  
+Shows the ranges of quality values across the length of all sequences in the Fastq file.  X-axis is position within a sequence/read, y-axis is the Phred scale quality score.  It is common to see lower quality values towards the ends of reads.  Looking at this plot will give you a good idea of how much trimming you will need to do in Step 2.  
 
 ![seqQual](../fig/fastqc_stats1.png)
-
-## Per tile sequence quality
-
-Shows the spatial distribution of mean qualities across the Illumina flow cell.  This test will let you know if there was something wrong with the equipment during sequencing that created a systematic bias.  If you do your own sequencing in-house, then this test could be important.  If you out source your sequencing to another facility, then they should have checked this before ever sending you the results, so you should be unlikely to see a failure here.
-
-![tile](../fig/fastqc_stats2.png)
 
 ## Per Sequence Quality Score
 
@@ -68,7 +62,7 @@ If you did expect the data to be random, and this test fails, it could indicate 
 
 ## Per Base GC content
 
-Very similar to the per base sequence content test, this check looks at the %GC at each position in a read across all reads in the sample.  A random library would have a horizontal line (same GC content across all bases) at whatever percentage value reflects the GC content of the reference genome.  A failure in this test can be interpreted the same as the per base sequence content test.
+Very similar to the per base sequence content test, this check looks at the %GC at each position in a read across all reads in the sample.  A random library would have a horizontal line (same GC content across all bases) at whatever percentage value reflects the GC content of the reference genome.  A failure in this test can be interpreted in the same way as a failure in the per base sequence content test.
 
 ![baseGC](../fig/fastqc_stats5.png)
 
@@ -94,7 +88,7 @@ The test will fail if there is any difference in read length, but note again tha
 
 ![seqLen](../fig/fastqc_stats8.png)
 
-## Duplicate Sequences
+## Sequence Duplication Level
 
 The module counts the number of times a particular sequence appears in your data set, and plots the relative number of sequences with each level of duplication.  The x-axis is the number of possible duplicates, and the y-axis is the number of sequences with that many copies.
 
@@ -109,6 +103,8 @@ If you run FastQC on amplicon data or GBS, this test may fail, since you expect 
 For any sequences that make up more that 0.1% of the total data, this check will list them and check them against known contaminants.  Contaminating sequence could come from microbes, or even from an excess of unincorporated Illumina adapters in your sample.  Even if there is no match for the overrepresented sequences, this test still reports them (since it could indicate some other contaminant or library issue).
 
 If you run FastQC on a GBS library, which has restriction enzyme recognition sites in every sequence, or on CHiP-seq, which likely has common recognition motifs, there is a good chance this test will fail, even though your data are fine.  
+
+If your data pass this test, FastQC won't report anything (no plot or table) for this test.
 
 ## Overrepresented Kmers
 
