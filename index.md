@@ -17,7 +17,7 @@ Introduction to the lesson.
 > Instructions for requesting an account are available [here](https://www.palmetto.clemson.edu/palmetto/).
 >
 > 2. Familiarize yourself with the procedure for logging-in to the cluster
->   by following the instructions [here](https://www.palmetto.clemson.edu/palmetto/userguide_basic_usage.html#logging-in).
+> by following the instructions [here](https://www.palmetto.clemson.edu/palmetto/userguide_basic_usage.html#logging-in).
 >
 {: .checklist}
 
