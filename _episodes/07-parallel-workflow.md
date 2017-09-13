@@ -42,7 +42,7 @@ mv * ~/genomics-workshop/Raw_Fastq/
 # Trimmomatic (Using a For Loop)
 For the purposes of this workshop, we are going to skip the first step of running FastQC on each file, and instead proceed directly to Step 2: Trimmomatic.
 
-In this example, we're going to use a For loop to run the same Trimmomatic command on every file inside of the Raw_Fastq directory.  The loop will help us do this all with one script (without having to write the command out 4 separate times), but note that in this first instance we are NOT running anything in parallel!  The command will run sequentially on each file (one after the other), but only one command will be executed at a time.  For the case of Trimmomatic, this is still fairly efficient, because Trimmomatic itself was written to be able to use multiple cores in one run (with the -threads option), but be aware that this will not be the case for all programs.
+In this example, we're going to use a `for` loop to run the same Trimmomatic command on every file inside of the Raw_Fastq directory.  The loop will help us do this all with one script (without having to write the command out 4 separate times), but note that in this first instance we are NOT running anything in parallel!  The command will run sequentially on each file (one after the other), but only one command will be executed at a time.  For the case of Trimmomatic, this is still fairly efficient, because Trimmomatic itself was written to be able to use multiple cores in one run (with the `-threads` option), but be aware that this will not be the case for all programs.
 
 First, we will submit the PBS job script for running Trimmomatic (it will take about 15-17 minutes to run completely on all 5 files), and while it is running, we will look at the contents of the script more closely.
 
@@ -99,7 +99,7 @@ for file in $src/Raw_Fastq/*.fastq
 ~~~
 tells the loop to operate on EVERY file inside of the Raw_Fastq folder that ends with the ".fastq" extension.  Note the use of the "*" wildcard character, which will match anything coming before ".fastq."
 
-In order to automatically get a name for each of my output files that will correspond to the names of each input file, I first use the "basename" command, which will take off all of the extra path information before the file name itself.  Here, I am also specifying a suffix (.fastq), so that will be taken off by basename as well.  This will leave me with just my sample name, which I can use as a prefix for my output file name in the next line:
+In order to automatically get a name for each of my output files that will correspond to the names of each input file, I first use the `basename` command, which will take off all of the extra path information before the file name itself.  Here, I am also specifying a suffix (.fastq), so that will be taken off by `basename` as well.  This will leave me with just my sample name, which I can use as a prefix for my output file name in the next line:
 ~~~
 export prefix=`basename $file .fastq`
 export outname="$prefix.trim.fq"
@@ -110,7 +110,7 @@ Finally, Trimmomatic is run with the same command line we used before, but now w
 # Bowtie2 (with multiple job scripts)
 Instead of writing a single loop that will process all files sequentially, you can take advantage of the many nodes available on Palmetto and submit a separate job for each file.  These will run simultaneously, thereby finishing faster than if they ran one after the other.  Note that you want to make sure you are requesting the appropriate resources for each individual job (and not taking up nodes that you don't need!).
 
-One potential drawback of this approach is that you actually have to write a separate PBS script for each input file.  This doesn't seem too bad for 4 files, but could become very time consuming for a large number of files.  To show you how you can automate this process, we will start with a template PBS script for running Bowtie2, and then we will run another shell script to search and replace filenames in order to make a new script for each input file.  The template script is bowtie2-aln.sh, so open it and look at how it is written:
+One potential drawback of this approach is that you actually have to write a separate PBS script for each input file.  This doesn't seem too bad for 4 files, but could become very time consuming for a large number of files.  To show you how you can automate this process, we will start with a template PBS script for running Bowtie2, and then we will run **another** shell script to search and replace filenames in order to make a new script for each input file.  The template script is `bowtie2-aln.sh`, so open it and look at how it is written:
 ~~~
 [ecoope4@node0050 scripts]$ less bowtie2-aln.sh 
 #!/bin/bash
@@ -162,7 +162,9 @@ do
 	done <fileList.txt 
 ~~~
 
-When this runs, you should have 5 new bowtie2 scripts.  Try using less to look at a couple of them, and check that the SRA ids and sample names have been changed correctly in each of them.  Now, you can submit each of these (you actually do NOT need to submit bowtie2.1.sh, since we ran this file yesterday) using the qsub command. 
+When this runs, you should have 5 new bowtie2 scripts.  Try using less to look at a couple of them, and check that the SRA ids and sample names have been changed correctly in each of them.  Now, you can submit each of these (you actually do NOT need to submit `bowtie2.1.sh`, since we ran this file yesterday) using the `qsub` command.
+
+Despite how cumbersome this method may seem at first, this is actually my preferred way for dealing with a lot of files.  This method works the same no matter how many individual files you have, and having a separate job run for each file makes it easy to keep track of errors if anything goes wrong with just one or a few files. 
 
 # Samtools (Using a single loop and job control)
 
@@ -172,7 +174,7 @@ The unix idea of "job control" has options that can allow a user to send a runni
 
 In this example, we are going to use a loop that will START a Samtools command on each SAM file in our Alignment directory, and then send each process to the background to run while the next file is started.  In this way, Samtools will be running on all of our files simultaneously, and the script will finish once all of the background processes have been completed.  
 
-(As a side note: the current version of Samtools actually does have a multithreading option, even though we are not using it here.  Previous versions of Samtools, however, did NOT have multithreading capability, so the use of job control used to much more crucial to the use of Samtools.)
+(As a side note: the current version of Samtools actually does have a multithreading option, even though we are not using it here.  Previous versions of Samtools, however, did NOT have multithreading capability, so the use of job control used to be crucial with Samtools.)
 
 The script for running Samtools as background processes is `samtools.sh.`  Use the `more` command to look at the contents of this script.
 
@@ -225,7 +227,7 @@ Let's look closer at how the `|` command line is working.  First, recall that th
 ~~~
 samtools view -O BAM <InFile> -o <OutFile>
 ~~~
-In the first half of the piped command, we no longer have the `-o <OutFile>` option for the "view" command, which means that by default the output of samtools view no goes to STDOUT, instead of into a file.  The `|` is taking this output from STDOUT and redirecting it straight into STDIN for the "sort" command.
+In the first half of the piped command, we no longer have the `-o <OutFile>` option for the "view" command, which means that by default the output of samtools would go to STDOUT, instead of into a file.  The `|` is taking this output from STDOUT and redirecting it straight into STDIN for the "sort" command.
 
 The "sort" command that we used on Day 1 looked like this:
 ~~~
@@ -234,12 +236,12 @@ samtools sort -o <OutFile> -O BAM <InFile>
 
 In our piped command line, we are still writing the final output to a file, so the `-o` option is still used.  The change is that we want the input to come from STDIN instead of from a file, BUT we also have to deal with the fact the Samtools requires an input file name as an argument, so we can't just leave this blank.  The `-` character at the end of the line is acting as a special placeholder for the filename argument that directs the program to use STDIN instead.
 
-After looking over how samtools.sh is written, submit the job using the `qsub` command to get sorted BAM files and BAM index (.bai) files for every sample.  This should take about 4-5 mintues to run.
+After looking over how `samtools.sh` is written, submit the job using the `qsub` command to get sorted BAM files and BAM index (.bai) files for every sample.  This should take about 4-5 mintues to run.
 
 # GATK HaplotypeCaller (with gnu-parallel)
-The last type of parallelization technique that we will look at is using GNU Parallel.  [GNU-parallel](https://www.gnu.org/software/parallel/) is a separate software written for the purpose of simplifying the parallel executation of command line jobs and scripts. The way that we will be implementing it in this exercise (to run GATK in parallel over a list of files) will seem a lot like the Samtools loop with background processes that we used earlier, but it is actually a more versatile tool that can be used in other ways.  Today's example is intended to give you a brief introduction of its syntax and how to use it; the above link to the homepage provides access to more detailed tutorials if you want to know more about different ways to implement gnu-parallel.  
+The last type of parallelization technique that we will look at is using GNU Parallel.  [GNU-parallel](https://www.gnu.org/software/parallel/) is a separate software written for the purpose of simplifying the parallel execution of command line jobs and scripts. The way that we will be implementing it in this exercise (to run GATK in parallel over a list of files) will seem a lot like the Samtools loop with background processes that we used earlier, but it is actually a more versatile tool that can be used in other ways.  Today's example is intended to give you a brief introduction of its syntax and how to use it; the above link to the homepage provides access to more detailed tutorials if you want to know more about different ways to implement gnu-parallel.  
 
-The script for running the GATK HaplotypeCaller on all sorted BAM files is gatk-hapCall.sh, so let's first look at its contents:
+The script for running the GATK HaplotypeCaller on all sorted BAM files is `gatk-hapCall.sh`, so let's first look at its contents:
 ~~~
 $ less gatk-hapCall.sh
 #!/bin/bash
@@ -268,23 +270,23 @@ parallel --plus -j 8 java -jar /panicle/GenomeAnalysisTK.jar \
 echo "FINISH ----------------------------"
 ~~~
 
-There a few key pieces of this script to take note of.  First, the line:
+There are a few key pieces of this script to take note of.  First, the line:
 ~~~
 module load gnu-parallel
 ~~~
-is loading the software module that has been pre-installed on Palmetto.  The java module is what GATK requires.  The next thing to notice is how the program is called: `parallel --plus -j 8` is the command that calls the gnu-parallel program.  The `--plus` option is here because it allows for an easier syntax with output file renaming (it's otherwise not required).  The `-j 8` option tells the program we want to run 8 jobs at a time in parallel.  
+is loading the software module that has been pre-installed on Palmetto.  The java module is also loaded because it is required by GATK.  The next thing to notice is how the program is called: `parallel --plus -j 8` is the command that calls the gnu-parallel program.  The `--plus` option is here because it allows for an easier syntax with output file renaming (it's otherwise not required).  The `-j 8` option tells the program we want to run 8 jobs at a time in parallel.  
 
 The parallel options get called just before we call the actual GATK tool (with the `java -jar` syntax that we used on Day 1).  The rest of the GATK command line stays mostly the same, except for the last line, which now looks quite different:
 ~~~
 -I {} -o $src/SNPs/{/..}.gvcf ::: $src/BamFiles/*.sort.bam
 ~~~
 
-The `:::` notation separates the command from the input source for the command (always given last).  In this case, the input source is the list of all files in the BamFiles directory that end with ".sort.bam".  The `-I` option is the GATK flag for specifying the input file; the `{}` notation used by gnu-parallel means that the input file name will be one of the names it reads from the input source.  The `{/..}` notation means that the program should use the input file name minus the path and the 2 file extensions.  In other words, if the first file in my input list is SRR098034.sort.bam, then gnu-parallel will see that for the first GATK process it needs an input file called BamFiles/SRR098034.sort.bam and an output file called SRR098034.gvcf.
+The `:::` notation separates the command from the input source for the command (always given last).  In this case, the input source is the list of all files in the BamFiles directory that end with ".sort.bam".  The `-I` option is the GATK flag for specifying the input file; the `{}` notation used by gnu-parallel means that the input file name will be one of the names it reads from the input source.  The `{/..}` notation means that the program should use the input file name minus the path and the 2 file extensions.  In other words, if the first file in my input list is "SRR098034.sort.bam", then `gnu-parallel` will see that for the first GATK process it needs an input file called "BamFiles/SRR098034.sort.bam" and an output file called "SRR098034.gvcf".
 
 Submit this job script to get the .gvcf files for each individual.
 
 # GATK GenotypeGVCFs
-The very last step in the pipeline, now that we have multiple .gvcf files, is to generate a single SNP file containing the genotypes at all sites that vary among any subset of the individuals in our sample.  This is done with the GATK tool GenotypeGVCFs:
+The very last step in the pipeline, now that we have multiple .gvcf files, is to generate a single SNP file containing the genotypes at all sites with a sequence variant (mutation) in one or more individuals in our sample.  This is done with the `GATK` tool `GenotypeGVCFs`:
 
 ~~~
 java -jar GenomeAnalysisTK.jar \

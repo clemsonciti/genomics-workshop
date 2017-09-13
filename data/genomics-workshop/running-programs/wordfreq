@@ -23,7 +23,11 @@ def word_count(fname):
     time.sleep(5)
     return dict(c)
 
-parser=argparse.ArgumentParser()
+parser=argparse.ArgumentParser(description=
+        """ Print word frequency for one or more text files.
+        Removes all punctuation and converts words to lowercase
+        before counting.
+        """)
 parser.add_argument('-j', type=int, metavar='N', default=1, help='Number of tasks to use')
 parser.add_argument('files', type=str, help='Input files', nargs='+')
 
