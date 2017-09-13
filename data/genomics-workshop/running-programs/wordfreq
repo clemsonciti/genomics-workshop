@@ -14,7 +14,7 @@ def word_count(fname):
     with open(fname) as f:
         data = f.read()
 
-    data_without_punctuation = data.translate(None, string.punctuation)
+    data_without_punctuation = data.translate(str.maketrans('', '', string.punctuation))
     data_without_newlines = ' '.join(data_without_punctuation.split('\n'))
     data_without_newlines = data_without_newlines.lower()
     data_as_string_list = data_without_newlines.split(' ')

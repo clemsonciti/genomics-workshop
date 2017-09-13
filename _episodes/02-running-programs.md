@@ -87,32 +87,101 @@ the path to it:
 
 ~~~
 $ ./wordfreq
-usage: wordfreq [-h] fname
-wordfreq: error: too few arguments
 ~~~
+{: .bash}
+
+~~~
+usage: wordfreq [-h] [-j N] files [files ...]
+wordfreq: error: the following arguments are required: files
+~~~
+{: .error}
+
+We see that `wordfreq` is missing a required argument
+or input `files`.
+Let's examine the "help" for `wordfreq` to understand
+this better:
+
+~~~
+$ ./wordfreq -h
+~~~~
+{: .bash}
+
+~~~
+usage: wordfreq [-h] [-j N] files [files ...]
+
+positional arguments:
+  files       Input files
+
+optional arguments:
+  -h, --help  show this help message and exit
+  -j N        Number of tasks to use
+~~~
+{: .output}
+
+
+Let's try specifying the name of an input file:
 
 ~~~
 $ ./wordfreq words-1.txt
-11 of
-11 a
-9 is
-8 to
-8 that
-8 the
-6 he
-6 it
-5 his
-5 and
-5 in
-4 be
-4 or
-4 mr
-4 single
 ~~~
+{: .bash}
+
+
+~~~
+ashwin@laptop ~/w/g/c/g/d/g/running-programs> ./wordfreq words-1.txt 
+6 it
+9 is
+11 a
+2 truth
+1 universally
+1 acknowledged
+8 that
+4 single
+4 man
+5 in
+2 possession
+11 of
+~~~
+{: .output}
+
+This time, `wordfreq` works as expected,
+printing the frequency of each word in the file `words-1.txt`.
+
+So far, all the commands we have been entering either produce no output
+(such as `cd`), or print output to the shell window.
+It is possible to *redirect* the ouput of a command
+to a file using the redirection operator `>`:
 
 ~~~
 $ ./wordfreq words-1.txt > count-words-1.txt
 ~~~
+{: .bash}
+
+The above command does not print anything.
+This is because the output has been *redirected* to the file `count-words-1.txt`.
+Let's examine that file to confirm our output is there:
+
+~~~
+$ cat count-words-1.txt 
+~~~
+{: .bash}
+
+~~~
+6 it
+9 is
+11 a
+2 truth
+1 universally
+1 acknowledged
+8 that
+4 single
+4 man
+5 in
+2 possession
+11 of
+1 good
+~~~
+{: .output}
 
 ~~~
 echo name
