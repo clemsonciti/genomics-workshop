@@ -139,3 +139,88 @@ so it is generally slower than local storage,
 but it is extremely convenient for data that needs to be visible
 to all nodes,
 or for data that needs to be accessed after a job completes.
+
+## Submitting your first job to the cluster
+
+The login node (`login001` or `login.palmetto.clemson.edu`)
+is not meant for running any computationally intensive programs
+(i.e., programs that take a long time to run,
+or use a lot of CPU cores or memory).
+We will simulate such a program with the following command:
+
+~~~
+$ sleep 100
+~~~
+
+(Hit `Ctrl+C` to interrupt the program and regain control of the shell).
+
+> ## Making a sleeper script
+>
+> Create a script called `sleeper.sh`
+> which contains the `sleep` command above.
+> On the login node, run the script using:
+>
+> ~~~
+> $ sh sleeper.sh
+> ~~~
+>
+> And kill it immediately using `Ctrl+C`!
+{: .challenge}
+
+We now have an example of a long-running task.
+To "submit" this task to the cluster,
+we will prepare a "batch script".
+A batch script is a regular shell script with a few additions
+(for example, a description of the amount of computing resources required to run the commands in the script).
+This batch script is then "submitted" to
+the **scheduler**.
+The scheduler manages all submitted jobs
+and allocates compute resources to them as they become available.
+Until the resources you request are available,
+the scheduler may "queue" your job.
+
+We can convert our shell script `sleeper.sh` to a
+batch script by adding the following two lines to the
+**top** of the script:
+
+~~~
+#PBS -N sleep
+#PBS -l select=1:ncpus=1:mem=1gb,walltime=00:05:00
+~~~
+
+Normally, lines beginning with a `#` are ignored by the shell
+(often useful to add *comments* to scripts).
+Lines beginning with `#PBS` are instructions or *directives* for the scheduler.
+The line `#PBS -N sleep` tells the scheduler that we'd like to name our job
+`sleep` (you can choose any name you like).
+The line `#PBS -l select=1:ncpus=1:mem=1gb,walltime=00:01:00`
+tells the scheduler to allocate 1 "chunk" of hardware for this job
+-- each "chunk" containing 1 CPU core and 1gb of RAM -- for a maximum
+walltime of five minutes.
+
+The reason the directives begin with the characters `#PBS`
+is that the scheduler software used on the cluster
+is called PBS (**P**ortable **B**atch **S**ystem).
+Different clusters may run different schedulers,
+so the specific commands to submit and control jobs on those clusters
+may differ slightly.
+
+> ## Submitting the `sleeper.sh` batch script
+>
+> After adding the lines above to your script
+> `sleeper.sh`, you can submit it to the scheduler
+> using the `qsub` command:
+>
+> ~~~
+> $ qsub sleeper.sh
+> ~~~
+>
+> The output should be a job ID.
+> With the job ID you can query the status of your "job" on the cluster
+>
+> ~~~
+> 
+> ~~~
+{: .challenge}
+
+
