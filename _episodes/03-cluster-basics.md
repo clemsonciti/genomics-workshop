@@ -158,6 +158,10 @@ $ sleep 100
 >
 > Create a script called `sleeper.sh`
 > which contains the `sleep` command above.
+> Add the following line after the `sleep` command:
+>
+> echo "Good morning!"
+>
 > On the login node, run the script using:
 >
 > ~~~
@@ -219,8 +223,74 @@ may differ slightly.
 > With the job ID you can query the status of your "job" on the cluster
 >
 > ~~~
-> 
+> $ qstat 125932.pbs02 
 > ~~~
+> 
+> If all went well, the output of `qstat` should show `R` (running)
+> under that `S` (status) column:
+>
+> ~~~
+> Job id            Name             User              Time Use S Queue
+> ----------------  ---------------- ----------------  -------- - -----
+> 1453338.pbs02     sleep            atrikut           00:00:00 R c1_solo>
+> ~~~
+>
+> Eventually, your job will complete, yielding the following messge:
+>
+> ~~~
+> qstat: 1453338.pbs02 Job has finished, use -x or -H to obtain historical job information
+> ~~~
+>
+> Once a job is completed, you can check for additional details using:
+>
+> ~~~
+> qstat -xf <jobID>
+> ~~~
+>
+> What node did your jobs run on? How much walltime did they take?
+> Does this align with the expected walltime for this job?
 {: .challenge}
 
+Once a batch job completes,
+you should also see two new files in the directory from which
+`qsub` was run:
 
+~~~
+$ ls 
+
+sleep.e1453338  sleep.o1453338  ....
+~~~
+
+These two files (`<job_name>.o<job_ID> and <job_name>.e<job_ID>`) contain
+the standard output (i.e., any text printed as output from the commands),
+and the standard error (i.e., any error text printed from the commands)
+of the job respectively.
+
+First, let's check that no errors were produced:
+
+~~~
+cat sleep.e1453338
+~~~
+
+And let's also have a look at the output:
+
+~~~
+Good morning!!
+
+
++------------------------------------------+
+| PALMETTO CLUSTER PBS RESOURCES REQUESTED |
++------------------------------------------+
+
+mem=1gb,ncpus=1,walltime=00:05:00
+
+
++-------------------------------------+
+| PALMETTO CLUSTER PBS RESOURCES USED |
++-------------------------------------+
+
+cpupercent=0,cput=00:00:00,mem=5456kb,ncpus=1,vmem=338432kb,walltime=00:01:41
+
+~~~
+
+We see that a job summary is printed in addition to the standard output.
