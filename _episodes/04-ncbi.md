@@ -5,9 +5,6 @@ exercises: 1
 questions:
 - "How do I navigate the NCBI database?"
 - "How do I download an SRA file?"
-keypoints:
-- "Keypoint 1"
-- "Keypoint 2"
 ---
 
 # Data Set
