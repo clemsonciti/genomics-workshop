@@ -294,3 +294,111 @@ cpupercent=0,cput=00:00:00,mem=5456kb,ncpus=1,vmem=338432kb,walltime=00:01:41
 ~~~
 
 We see that a job summary is printed in addition to the standard output.
+
+## Interactive jobs
+
+Interactive jobs allow you to enter commands interactively on a compute node(s)
+(as opposed to the login node).
+As with batch jobs, you need to request the scheduler for hardware and walltime for your interactive job.
+When the requested resources become available, you are presented with a shell running on a compute node:
+
+
+~~~
+[atrikut@login001 ~]$  qsub -I -l select=1:ncpus=1:mem=1gb,walltime=00:01:00
+qsub (Warning): Interactive jobs will be treated as not rerunnable
+qsub: waiting for job 1482202.pbs02 to start
+qsub: job 1482202.pbs02 ready
+
+[atrikut@node0025 ~]$ 
+
+~~~
+
+The shell prompt now indicates that you are on a compute node `node0025`.
+While on a compute node, you can enter commands to run tasks
+using the hardware resources you requested.
+
+To end the interactive job and return to the login node, simply type `exit`.
+
+Interactive jobs are ideal for testing programs, prototyping workflows,
+or performing one-off tasks that are computationally intensive
+(such as installing/compiling software, zipping/unzipping large files,
+or copying/moving large amounts of data).
+
+In "production" though, you should prefer batch jobs, as they are
+more reproducible, they don't need you to be logged-in while they are queued or running,
+and you can submit and monitor several of them easily.
+
+## Modules
+
+Modules are pre-installed software packages that are available to use
+without any configuration by users.
+You can see a list of modules installed on the cluster
+using `module avail`:
+
+~~~
+$ module avail
+
+abaqus/6.10                        cuDNN/7.0v4.0                      go/1.6.2                           lammps/29Aug14-sp-k20              openmpi/1.6.4-eth                  python/2.7.13
+abaqus/6.13                        cuDNN/8.0v5.1                      go/1.7.1                           lumerical/2017a                    openmpi/1.6.4-mlx4                 python/2.7.6
+abaqus/6.14                        cuDNN/8.0v6                        go/1.8.3                           magma/1.4.1                        openmpi/1.6.4-mlx5                 python/3.4
+amber/14                           cuDNN/8.0v7                        grass/7.0                          mathematica/10.0                   openmpi/1.6.4-myri                 Qt/4.8.5
+anaconda/2.5.0                     cufflinks/2.1.1                    grass/7.2                          mathematica/11.1                   openmpi/1.6.4-myri-intel           Qt/5.2.1
+anaconda/4.2.0                     deep-learning                      gromacs/4.5.4-sp                   matlab/2012a                       openmpi/1.6.4-qib                  Qt/5.6
+anaconda/4.3.0(default)            divvy/0.9                          gromacs/4.6.5-dp-ompi              matlab/2013a                       openmpi/1.8.1                      R/3.0.2
+anaconda3/2.5.0                    dmol/3.0                           gromacs/4.6.5-sp-k20-ompi          matlab/2014a                       openmpi/1.8.1-eth                  R/3.2.2
+anaconda3/4.2.0                    earlang/18.2.1                     gromacs/5.0.1-dp-g481-o181         matlab/2014b                       openmpi/1.8.1-mlx                  rabbitmq/8Feb16
+anaconda3/4.3.0                    emboss/6.6                         gromacs/5.0.1-sp-k20-g481-o181     matlab/2015a                       openmpi/1.8.1-myri                 rclone/1.23
+ansys/15.0                         espeak/1.48.04                     gromacs/5.0.5-gpu                  matlab/2016a                       openmpi/1.8.1-qib                  ruby/2.1.1
+ansys/16.0                         espresso/5.1                       gromacs/5.0.5-nogpu                matlab/2017a                       openmpi/1.8.4                      rust/1.19.0
+ansys/17.0                         espresso/5.4                       gsl/1.15                           maven/3.2.1                        openmpi/1.8.4-eth                  rust/1.20.0
+ansys/17.2                         examples                           gsl/1.16                           mono/5.2.0                         openmpi/1.8.4-mlx                  sage/6.1.1
+~~~
+
+Modules must be "loaded" before they can be used.
+As an example, let's load the `wordfreq` module:
+
+~~~
+$ module load wordfreq/0.1
+~~~
+
+With the `wordfreq` module loaded, we can run the `wordfreq` program. `wordfreq` is a simple tool
+to count the frequency of words appearing in a text file:
+
+~~~
+$ wordfreq salmon.txt
+~~~
+
+~~~
+3 coho
+4 steelhead
+1 
+~~~
+
+> ## Using `wordfreq` to count words in Dracula
+> 
+> `wordfreq` can also work with multiple files:
+> 
+> ~~~
+> $ wordfreq dracula-1.txt dracula-2.txt
+> ~~~
+> 
+> The files `dracula-1.txt dracula-2.txt ... dracula-15.txt` contain the text for Bram Stoker's
+> classic novel "Dracula". Our objective is to obtain a **sorted** word frequency
+> for the novel.
+> 
+> 1. Request an interactive job with 1 core, 1 GB of RAM and for 20 minutes
+> 2. Load the `wordfreq` module
+> 3. Navigate to the `data/text` directory containing the text files `dracula-1.txt dracula-2.txt  ... dracula-15.txt`
+> 4. Use `wordfreq` to obtain a count of each word appearing in the Dracula novel. Hint: you can use a wildcard
+> to generate a list of all the files `dracula-1.txt dracula-2.txt ... dracula-15.txt`.
+> 5. Re-do the above step, this time sorting the output so that the most frequently appearing word is the first line in the output
+> 
+> How long do steps (4) and (5) take? Does it seem reasonable for this task to take so long?
+{: .challenge}
+
+> ## `wordfreq` batch job
+>
+> Re-do the last exercise, except this time,
+> write a batch script that you can submit to the cluster.
+> In your batch script, you should include commands for steps (2), (3) and (5).
+{: .challenge}
