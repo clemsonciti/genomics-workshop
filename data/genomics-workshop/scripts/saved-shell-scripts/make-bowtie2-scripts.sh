@@ -8,4 +8,4 @@ do
 	sed "s/TEMP_SRA/$sraID/g" scripts/bowtie2-aln.sh >scripts/temp.sh
 	sed "s/TEMP_SAMPLE/$sample/g" scripts/temp.sh >"scripts/bowtie2.$x.sh"
 	let x=(x+1)
-done <fileList.txt 
+done < data/fileList.txt 

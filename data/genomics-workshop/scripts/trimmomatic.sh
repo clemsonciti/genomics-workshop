@@ -3,13 +3,12 @@
 #PBS -l select=1:ncpus=8:mem=11gb,walltime=2:00:00
 #PBS -j oe
 
-
 echo "START ------------------------------"
 
 module add java/1.8.0
 
 src=/home/$USER/genomics-workshop
-export adapt=$src/adapters.fasta
+export adapt=$src/data/adapters.fasta
 
 for file in $src/Raw_Fastq/*.fastq
 do
