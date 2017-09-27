@@ -8,7 +8,7 @@ echo "START ------------------------------"
 
 module add java/1.8.0
 
-src=/zfs/tillers/liz/workshop
+src=/home/$USER/genomics-workshop
 export adapt=$src/adapters.fasta
 
 for file in $src/Raw_Fastq/*.fastq
