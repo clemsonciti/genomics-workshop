@@ -50,26 +50,36 @@ First, create a directory to hold the raw data files:
 ~~~
 [nelle@login001 genomics-workshop]$ mkdir Raw_Fastq
 ~~~
+{: .bash}
 
 Log onto an interactive node:
 ~~~
 [nelle@login001 genomics-workshop]$ qsub -I -l select=1:ncpus=2:mem=31gb:interconnect=1g,walltime=1:00:00
+~~~
+{: .bash}
+
+~~~
 qsub (Warning): Interactive jobs will be treated as not rerunnable
 qsub: waiting for job 465026.pbs02 to start
 qsub: job 465026.pbs02 ready
 
 [nelle@node1134 ~]$
 ~~~
+{: .output}
 
 Load the SRA toolkit module:
 ~~~ 
 [nelle@node1134 ~]$ module load sratoolkit/2.8.2-1
 ~~~
+{: .bash}
 
 Now, fetch the first .sra file from the ncbi repository:
 ~~~
 [nelle@node1134 ~]$ prefetch -v SRR098034
+~~~
+{: .bash}
 
+~~~
 2017-07-18T13:01:54 prefetch.2.8.2: KClientHttpOpen - connected to www.ncbi.nlm.nih.gov
 2017-07-18T13:01:54 prefetch.2.8.2: KClientHttpOpen - verifying CA cert
 2017-07-18T13:01:54 prefetch.2.8.2: KClientHttpOpen - connected to sra-download.ncbi.nlm.nih.gov
@@ -83,31 +93,51 @@ Now, fetch the first .sra file from the ncbi repository:
 2017-07-18T13:01:59 prefetch.2.8.2: 1) 'SRR098034' was downloaded successfully
 [nelle@node1134 ~]$
 ~~~
+{: .output}
 
 The .sra file is automatically put in a specific place created in your home directory, which can be found at:
 ~~~
 [nelle@node1134 ~]$ cd ~/ncbi/public/sra/
 [nelle@node1134 ~]$ ls
+~~~
+{: .bash}
+
+~~~
 SRR098034.sra
 ~~~
+{: .output}
 
 From this directory, convert the file to .fastq format, and have it output to the Raw data folder we made inside of our workshop directory:
 ~~~
 [nelle@node1134 sra]$ fastq-dump SRR098034.sra --outdir ~/genomics-workshop/Raw_Fastq/
+~~~
+{: .bash}
+
+~~~
 Read 7575758 spots for SRR098034.sra
 Written 7575758 spots for SRR098034.sra
 ~~~
+{: .output}
 
 This step might take a few minutes to complete.  Once it is finished, cd into the Raw_Fastq directory and check that the output file is there.
 
 ~~~
 [nelle@node1134 sra]$ cd ~/genomics-workshop/Raw_Fastq/
 [nelle@node1134 Raw_Fastq]$ ls
+~~~
+{: .bash}
+
+~~~
 SRR098034.fastq
 ~~~
+{: .output}
 
 ~~~
 [nelle@node1134 Raw_Fastq]$ head SRR098034.fastq
+~~~
+{: .bash}
+
+~~~
 @SRR098034.1 30KR6AAXXLesnki_set_1_2:1:2:1394:602 length=36
 GGTTGACGAGTTTATCGAAGTTTTTCGCCAGAACCA
 +SRR098034.1 30KR6AAXXLesnki_set_1_2:1:2:1394:602 length=36
@@ -119,9 +149,11 @@ CCCCCCCA6ACCCCACCAC?CCC<CCCCA<AC?<?%
 @SRR098034.3 30KR6AAXXLesnki_set_1_2:1:2:1255:120 length=36
 GTTCGCCAAGTTCATTGGCAGAGGGAGCCAACAGAC
 ~~~
+{: .output}
 
-# Exercise
-Write a PBS job script that will run prefetch and then fastq-dump on the remaining 4 SRR IDs listed in the Data Set table. 
-*	_Remember to include the module load sratoolkit/2.8.2-1 command at the beginning of your script_
-
-Submit your job script using `qsub` so that it can run while we are doing the next module (it will take about 40 minutes to complete on all files). 
+> ## Exercise
+> Write a PBS job script that will run prefetch and then fastq-dump on the remaining 4 SRR IDs listed in the Data Set table. 
+> Remember to include the module load sratoolkit/2.8.2-1 command at the beginning of your script.
+> Submit your job script using `qsub` so that it can run while we are doing the next module (it will take about 40 minutes to complete on all files). 
+>
+{: .challenge}
