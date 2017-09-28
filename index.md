@@ -3,7 +3,16 @@ layout: lesson
 root: .
 ---
 
-Introduction to the lesson.
+This workshop is intended for researchers in genomics and related fields
+with little to no experience with the command-line, large-scale computing,
+or with computational genomics tools and workflows.
+The topics covered will include: an introduction to the Linux command-line,
+and introduction to large-scale computing and submitting jobs to a typical
+high-performance computing resource,
+running a typical raw data to
+variant calling workflow for Illumina data, and
+strategies for running the same workflow on multiple files in
+parallel, to take advantage of the cluster architecture.
 
 > ## Prerequisites
 > Some knowledge of the Unix shell is desired, but not strictly necessary.
