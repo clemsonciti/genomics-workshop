@@ -40,7 +40,7 @@ In this next part of the lesson,
 we'll run some simple command-line programs
 for transforming and filtering text.
 
-We'll start with a directory called `molecules`
+We'll start with the directory `molecules`
 that contains six files describing some simple organic molecules.
 The `.pdb` extension indicates that these files are in Protein Data Bank format,
 a simple text format that specifies the type and position of each atom in the molecule.
@@ -554,53 +554,6 @@ so this matches all the valid data files she has.
 > {: .solution}
 {: .challenge}
 
-> ## What Does `<` Mean?
->
-> Change directory to `data-shell` (the top level of our downloaded example data).
->
-> What is the difference between:
->
-> ~~~
-> $ wc -l notes.txt
-> ~~~
-> {: .bash}
->
-> and:
->
-> ~~~
-> $ wc -l < notes.txt
-> ~~~
-> {: .bash}
->
-> > ## Solution
-> > `<` is used to redirect input to a command. 
-> >
-> > In both examples, the shell returns the number of lines from the input to
-> > the `wc` command.
-> > In the first example, the input is the file `notes.txt` and the file name is
-> > given in the output from the `wc` command.
-> > In the second example, the contents of the file `notes.txt` are redirected to
-> > standard input.
-> > It is as if we have entered the contents of the file by typing at the prompt.
-> > Hence the file name is not given in the output - just the number of lines.
-> > Try this for yourself:
-> >
-> > ```
-> > $ wc -l
-> > this
-> > is
-> > a test
-> > Ctrl-D # This lets the shell know you have finished typing the input
-> > ```
-> > {: .bash}
-> >
-> > ```
-> > 3
-> > ```
-> > {: .output}
-> {: .solution}
-{: .challenge}
-
 > ## What Does `>>` Mean?
 >
 > What is the difference between:
@@ -687,7 +640,7 @@ so this matches all the valid data files she has.
 > ## Why Does `uniq` Only Remove Adjacent Duplicates?
 >
 > The command `uniq` removes adjacent duplicated lines from its input.
-> For example, the file `data-shell/data/salmon.txt` contains:
+> For example, the file `genomics-workshop/data/dracula/salmon.txt` contains:
 >
 > ~~~
 > coho
