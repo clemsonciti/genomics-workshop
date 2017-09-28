@@ -128,6 +128,8 @@ These are usually hidden from the output of `ls`.
 > 7. `ls genomics-workshop`
 > 8. `ls -Fa genomics-workshop`
 >
+> Sometimes shell
+> 
 {: .callout}
 
 So far, we have been working in our "home" directories (`/home/username`).
@@ -156,13 +158,13 @@ We can confirm this using `pwd`:
 ~~~
 {: .output}
 
-> ## Exploring the `shell-basics` folder
+> ## Exploring the `data` folder
 > 
 > This is a pen-and-paper exercise.
 >
 > Inside the `genomics-workshop` directory,
-> you will find the directory `shell-basics`.
-> Explore the directory `shell-basics`
+> you will find the directory `data`.
+> Explore the directory `data`
 > using the commands you have learned so far,
 > and draw a diagram representing the
 > layout of the files and folders inside it.
@@ -177,6 +179,8 @@ We can confirm this using `pwd`:
 > └── thesis/
 > ~~~
 >
+> If a folder contains many files, you can include just a few of them
+> in your diagram.
 > Compare your diagram with your neighbour's.
 > Did you find any differences?
 >
@@ -197,7 +201,7 @@ We can confirm this using `pwd`:
 > called `genomics-workshop-backup`.
 > In the original `genomics-workshop` directory,
 > delete all files beginning with the letter `c`
-> in the folder `shell-basics/data/pdb`, i.e., the files:
+> in the folder `data/pdb`, i.e., the files:
 > 
 > ~~~
 > camphene.pdb       cinnamaldehyde.pdb codeine.pdb        cyclobutane.pdb    cyclopropane.pdb
@@ -222,20 +226,20 @@ Paths can be *relative* or *absolute*.
  
 A relative path specifies the location of a file or folder
 *relative* to the current directory. For example,
-starting from the home directory, `genomics-workshop/shell-basics/data/molecules`
+starting from the home directory, `genomics-workshop/data/molecules`
 is a relative path to the `molecules` directory:
  
 ~~~
-[nelle@login001 ~]$ cd genomics-workshop/shell-basics/data/molecules/
+[nelle@login001 ~]$ cd genomics-workshop/data/molecules/
 ~~~
 {: .bash}
 
 But starting from the `genomics-workshop` directory,
-the relative path is instead `shell-basics/data/molecules`:
+the relative path is instead `data/molecules`:
 
 ~~~
-[nelle@login001 molecules]$ cd genomics-workshop
-[nelle@login001 shell-basics]$ cd shell-basics/data/molecules/
+[nelle@login001 ~]$ cd genomics-workshop
+[nelle@login001 genomics-workshop]$ cd data/molecules/
 ~~~
 {: .bash}
 
@@ -247,7 +251,7 @@ starting from the top-most (i.e., the "root" directory `/`).
 It always begins with a slash `/`:
 
 ~~~
-[nelle@login001 molecules]$ cd /home/nelle/genomics-workshop/shell-basics/data/molecules
+[nelle@login001 molecules]$ cd /home/nelle/genomics-workshop/data/molecules
 ~~~
 {: .bash}
 
@@ -276,16 +280,16 @@ is the same everywhere.
 > `/home/amanda`?
 {: .challenge}
 
-Looking at the `shell-basics` directory,
+Looking at the `data` directory,
 we see two files `notes.txt` and `solar.pdf`:
 
 ~~~
-[nelle@login001 shell-basics]$ ls
+[nelle@login001 data]$ ls
 ~~~
 {: .bash}
 
 ~~~
-data  notes.txt  programs  solar.pdf
+adapters.fasta  dracula  fileList.txt  molecules  notes.txt  pdb  solar.pdf
 ~~~
 {: .output}
 
@@ -341,7 +345,7 @@ to edit text files.
 for basic text editing:
 
 ~~~
-[nelle@login001 shell-basics]$ nano notes.txt
+[nelle@login001 data]$ nano notes.txt
 ~~~
 {: .bash}
 
