@@ -14,6 +14,14 @@ variant calling workflow for Illumina data, and
 strategies for running the same workflow on multiple files in
 parallel, to take advantage of the cluster architecture.
 
+Many parts of this lesson (including the website design) borrow
+from the lesson materials of [Software Carpentry](https://software-carpentry.org/)
+an organization dedicated to teaching researchers and scientists
+the basic "lab skills" for computing.
+You may be interested in Software Carpentry's other
+[lessons](https://software-carpentry.org/lessons/) on topics
+like programming in R/Python, version control with Git/GitHub, etc.,
+
 > ## Prerequisites
 > Some knowledge of the Unix shell is desired, but not strictly necessary.
 > Some knowledge of genetics is required; e.g., you should know what
