@@ -197,9 +197,10 @@ The final task for Day 1 is to run the GATK HaplotypeCaller to generate a .gvcf 
 
 ~~~
 module load java/1.8.0
+module load GATK
 mkdir SNPs
 
-java -jar GenomeAnalysisTK.jar -T HaplotypeCaller \
+java -jar $GATK -T HaplotypeCaller \
 -I BamFiles/SRR098034.sort.bam \
 -R Reference/Ecoli_Ref.fa \
 -o SNPs/SRR098034.gvcf \
