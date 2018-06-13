@@ -254,12 +254,13 @@ echo "START ------------------------------"
 
 module add java/1.8.0 
 module load gnu-parallel
+module load GATK
 
-src=/zfs/tillers/liz/workshop
+src=/home/ajmason/genomics-workshop
 
 ### Use gnu-parallel to use multiple cores
 ### within one script
-parallel --plus -j 8 java -jar /panicle/GenomeAnalysisTK.jar \
+parallel --plus -j 8 java -jar $GATK \
         -T HaplotypeCaller \
         -R $src/Reference/Ecoli_Ref.fa \
 	-ploidy 1 \
