@@ -12,7 +12,7 @@ src=/home/$USER/genomics-workshop
 export srrname=TEMP_SRA
 export sample=TEMP_SAMPLE
 
-bowtie2 -p 8 -x $src/Reference/Ecoli_Ref.fa \
+bowtie2 -p 8 -x $src/Reference/Ecoli_Ref \
 	--rg-id  $srrname \
 	--rg "SM:$sample" \
 	-U "$src/Trimming/$srrname.trim.fq" \
