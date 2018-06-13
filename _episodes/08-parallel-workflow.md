@@ -123,7 +123,7 @@ echo "START ------------------------------"
 
 module add bowtie2/2.1.0 
 
-src=/zfs/tillers/liz/workshop
+src=/home/$USER/genomics-workshop
 export srrname=TEMP_SRA
 export sample=TEMP_SAMPLE
 
@@ -156,8 +156,8 @@ We are going to read in each line of this file, and then make a new PBS script w
 do
 	export sraID=`echo $line | cut -d" " -f1`
 	export sample=`echo $line | cut -d" " -f2`
-	sed "s/TEMP_SRA/$sraID/g" ../scripts/bowtie2-aln.sh >scripts/temp.sh
-	sed "s/TEMP_SAMPLE/$sample/g" ../scripts/temp.sh >"scripts/bowtie2.$x.sh"
+	sed "s/TEMP_SRA/$sraID/g" ../scripts/bowtie2-aln.sh >../scripts/temp.sh
+	sed "s/TEMP_SAMPLE/$sample/g" ../scripts/temp.sh >"../scripts/bowtie2.$x.sh"
 	let x=(x+1)
 	done <fileList.txt 
 ~~~
