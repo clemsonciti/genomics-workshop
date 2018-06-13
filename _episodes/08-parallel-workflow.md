@@ -190,7 +190,7 @@ echo "START ------------------------------"
 
 module add samtools/1.4 
 
-src=/zfs/tillers/liz/workshop
+src=/home/$USER/genomics-workshop
 
 ### Loop over all aligned SAM files
 ### Convert to bam and sort
