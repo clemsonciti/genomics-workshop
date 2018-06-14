@@ -158,9 +158,12 @@ $ sleep 100
 >
 > Create a script called `sleeper.sh`
 > which contains the `sleep` command above.
-> Add the following line after the `sleep` command:
+> Add the following command before and after the
+> sleep command:
 >
-> echo "Good morning!"
+> ~~~
+> date
+> ~~~
 >
 > On the login node, run the script using:
 >
@@ -168,7 +171,10 @@ $ sleep 100
 > $ sh sleeper.sh
 > ~~~
 >
-> And kill it immediately using `Ctrl+C`!
+> **Note**: In general, you should never run scripts
+> on the login node, but since this one is just
+> doing nothing ("sleeping"), it's acceptable.
+
 {: .challenge}
 
 We now have an example of a long-running task.
