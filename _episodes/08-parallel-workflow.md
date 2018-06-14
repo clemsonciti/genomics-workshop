@@ -290,9 +290,6 @@ Submit this job script to get the .gvcf files for each individual.
 The very last step in the pipeline, now that we have multiple .gvcf files, is to generate a single SNP file containing the genotypes at all sites with a sequence variant (mutation) in one or more individuals in our sample.  This is done with the `GATK` tool `GenotypeGVCFs`:
 
 ~~~
-qsub -I select=1:ncpus=8:mem=11gb,walltime=2:00:00
-
-module load GATK
 
 java -jar $GATK \
 	-T GenotypeGVCFs \
