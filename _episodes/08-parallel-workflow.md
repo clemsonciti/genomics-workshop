@@ -5,7 +5,7 @@ exercises: 1
 ---
 
 # Overview
-The purpose of today's exercises will be to perform all of the steps in the Variant Calling Workflow on the 4 remaining raw data files.  At each step, we will look at a different possible way for parallelizing a process to run on all 4 files simultaneously.  After running the GATK HaplotypeCaller on all files, we will run the final step of the variant calling pipeline (GATK GenotypeGVCFs) in order to generate the final file containing polymorphism information for each individual.  As a reminder, the steps in the variant calling workflow are:
+The purpose of these exercises will be to perform all of the steps in the Variant Calling Workflow on the 4 remaining raw data files.  At each step, we will look at a different possible way for parallelizing a process to run on all 4 files simultaneously.  After running the GATK HaplotypeCaller on all files, we will run the final step of the variant calling pipeline (GATK GenotypeGVCFs) in order to generate the final file containing polymorphism information for each individual.  As a reminder, the steps in the variant calling workflow are:
 
 1. Quality check with FastQC
 2. Trim and filter with Trimmomatic
@@ -16,7 +16,7 @@ The purpose of today's exercises will be to perform all of the steps in the Vari
 	2. Perform joint genotyping across all .gvcf files to get the final VCF file for the population (GATK GenotypeGVCFs)
 
 # Before Starting
-As part of the exercises from Day 1, you should now have all 5 fastq files in your Raw_Fastq folder:
+As a reminder, you should now have all 5 fastq files in your Raw_Fastq folder:
 ~~~
 cd ~/genomics-workshop/Raw_Fastq
 ls -lh
@@ -66,7 +66,7 @@ echo "START ------------------------------"
 
 module add java/1.8.0
 
-src=/zfs/tillers/liz/workshop
+src=/home/$USER/genomics-workshop
 export adapt=$src/adapters.fasta
 
 for file in $src/Raw_Fastq/*.fastq
@@ -85,9 +85,9 @@ done
 echo "FINISH ----------------------------"
 ~~~
 
-The Trimmomatic command itself is relatively unchanged from the command we ran on Day 1 in interactive mode (all of the parameter options are the same), but there are a few key pieces of this script that help with running the command effectively in a loop.  First, note these two lines:
+The Trimmomatic command itself is relatively unchanged from the command we ran in interactive mode (all of the parameter options are the same), but there are a few key pieces of this script that help with running the command effectively in a loop.  First, note these two lines:
 ~~~
-src=/zfs/tillers/liz/workshop
+src=/home/$USER/genomics-workshop
 export adapt=$src/adapters.fasta
 ~~~
 
@@ -107,10 +107,10 @@ export outname="$prefix.trim.fq"
 
 Finally, Trimmomatic is run with the same command line we used before, but now we have the variables "$file" specifying the input, "$outname" specifying the output, and "$adapt" specifying the adapters.fasta file. 
 
-# Bowtie2 (with multiple job scripts)
+# Run Bowtie2 with multiple job scripts
 Instead of writing a single loop that will process all files sequentially, you can take advantage of the many nodes available on Palmetto and submit a separate job for each file.  These will run simultaneously, thereby finishing faster than if they ran one after the other.  Note that you want to make sure you are requesting the appropriate resources for each individual job (and not taking up nodes that you don't need!).
 
-One potential drawback of this approach is that you actually have to write a separate PBS script for each input file.  This doesn't seem too bad for 4 files, but could become very time consuming for a large number of files.  To show you how you can automate this process, we will start with a template PBS script for running Bowtie2, and then we will run **another** shell script to search and replace filenames in order to make a new script for each input file.  The template script is `bowtie2-aln.sh`, so open it and look at how it is written:
+One potential drawback of this approach is that you actually have to write a separate PBS script for each input file.  This doesn't seem too bad for 4 files, but could become very time consuming for a large number of files.  To show you how you can automate this process, we will start with a template PBS script for running Bowtie2, and then we will run **another** shell script (just a loop) to search and replace filenames in order to make a new script for each input file.  The template script is `bowtie2-aln.sh`, so open it and look at how it is written:
 ~~~
 [ecoope4@node0050 scripts]$ less bowtie2-aln.sh 
 #!/bin/bash
@@ -166,7 +166,7 @@ When this runs, you should have 5 new bowtie2 scripts.  Try using less to look a
 
 Despite how cumbersome this method may seem at first, this is actually my preferred way for dealing with a lot of files.  This method works the same no matter how many individual files you have, and having a separate job run for each file makes it easy to keep track of errors if anything goes wrong with just one or a few files. 
 
-# Samtools (Using a single loop and job control)
+#  Using a single loop and job control to run Samtools
 
 In both the Trimmomatic and Bowtie2 scripts we used above, we were able to take advantage of the fact that those two programs have multithreading options (`-threads` in Trimmomatic and `-p` in Bowtie2) in order to use all of the available cores on a given node.  However, sometimes you will need to use programs that don't permit multithreading, so it is worth considering alternate strategies for running these efficiently on the cluster.  
 
@@ -238,12 +238,44 @@ In our piped command line, we are still writing the final output to a file, so t
 
 After looking over how `samtools.sh` is written, submit the job using the `qsub` command to get sorted BAM files and BAM index (.bai) files for every sample.  This should take about 4-5 mintues to run.
 
-# GATK HaplotypeCaller (with gnu-parallel)
-The last type of parallelization technique that we will look at is using GNU Parallel.  [GNU-parallel](https://www.gnu.org/software/parallel/) is a separate software written for the purpose of simplifying the parallel execution of command line jobs and scripts. The way that we will be implementing it in this exercise (to run GATK in parallel over a list of files) will seem a lot like the Samtools loop with background processes that we used earlier, but it is actually a more versatile tool that can be used in other ways.  Today's example is intended to give you a brief introduction of its syntax and how to use it; the above link to the homepage provides access to more detailed tutorials if you want to know more about different ways to implement gnu-parallel.  
-
-The script for running the GATK HaplotypeCaller on all sorted BAM files is `gatk-hapCall.sh`, so let's first look at its contents:
+#  Using Gnu-Parallel to call haplotypes with GATK
+The last type of parallelization technique that we will look at is using GNU Parallel.  [GNU-parallel](https://www.gnu.org/software/parallel/) is a separate software written for the purpose of simplifying the parallel execution of command line jobs and scripts. Gnu-parallel may seem intimidating, but is one of the most effective ways of parallelizing tasks on the palmetto cluster. There are several different ways that one can call gnu-parallel with slightly different command structures. In my opinion, one of the most straightforward methods is to piping to direct gnu-parallel. To use this method it is best to start out by creating a list file that passes each item in the list to gnu parallel. For instance, if we wanted to run a command in parallel on three files called red, blue, and yellow, we could navigate to th directory containing them and do this:
 ~~~
-$ less gatk-hapCall.sh
+[user@node]$cd colors
+[user@node]$ls > list.txt
+~~~
+If we were to cat that list we should see:
+~~~
+blue
+red
+yellow
+~~~
+Now, if we wanted to execute a task like echoing the color we could pipe that output into parallel in the following way:
+
+~~~
+[usr@node]cat list.txt | parallel "echo {}"
+~~~
+
+With this format of parallel, the commands inside the quotes are what is passed to the machine and the bracket is filled with the output from the pipe. You can ask parallel to show you this if you specify it using the -v or --verbose switch, which should look like this:
+
+~~~
+[usr@node]cat list.txt | parallel --verbose "echo {}"
+echo blue
+echo red
+echo yellow
+blue
+red
+yellow
+~~~
+
+Using the verbose option of parallel is a great way to trouble shoot, so I recommend using it most of the time. Additionally, because the brackets are replaced exactly with what is piped in it is very important to make the sure the list contents are exactly what you want. For instance, if you would like to use a file blue.txt as input and have it output as blue.out it would be easier to have the list contents be "blue" instead of "blue.txt". There are a variety of strategies to accomplish this, especially using piping and editing commands like sed. 
+
+The way that we will be implementing gnu-parallel in this exercise is to run GATK in parallel over a list of files. Today's example is intended to give you a brief introduction of its syntax and how to use it; the above link to the homepage provides access to more detailed tutorials if you want to know more about different ways to implement gnu-parallel.  
+
+The script we will use for running the GATK HaplotypeCaller on all sorted BAM files is `gatk-hapCall.sh`, so let's first look at its contents:
+~~~
+less gatk-hapCall.sh
+
 #!/bin/bash
 #PBS -N gatk
 #PBS -l select=1:ncpus=8:mem=15gb,walltime=2:00:00
@@ -256,17 +288,17 @@ module add java/1.8.0
 module load gnu-parallel
 module load GATK
 
-src=/home/ajmason/genomics-workshop
+src=/home/$USER/genomics-workshop
 
 ### Use gnu-parallel to use multiple cores
 ### within one script
-parallel --plus -j 8 java -jar $GATK \
+cd $src/BamFiles
+cat list.txt | parallel --verbose -j 8 "java -jar $GATK \
         -T HaplotypeCaller \
         -R $src/Reference/Ecoli_Ref.fa \
 	-ploidy 1 \
         -ERC GVCF -variant_index_type LINEAR -variant_index_parameter 128000 \
-        -I {} -o $src/SNPs/{/..}.gvcf ::: $src/BamFiles/*.sort.bam
-
+        -I {}.sort.bam -o $src/SNPs/{}.gvcf" 
 
 echo "FINISH ----------------------------"
 ~~~
@@ -275,16 +307,11 @@ There are a few key pieces of this script to take note of.  First, the line:
 ~~~
 module load gnu-parallel
 ~~~
-is loading the software module that has been pre-installed on Palmetto.  The java module is also loaded because it is required by GATK.  The next thing to notice is how the program is called: `parallel --plus -j 8` is the command that calls the gnu-parallel program.  The `--plus` option is here because it allows for an easier syntax with output file renaming (it's otherwise not required).  The `-j 8` option tells the program we want to run 8 jobs at a time in parallel.  
+is loading the software module that has been pre-installed on Palmetto.  The java module is also loaded because it is required by GATK.  The next thing to notice is how the program is called: `parallel --plus -j 8` is the command that calls the gnu-parallel program.  The `-j 8` option tells the program we want to run 8 jobs at a time in parallel.  
 
-The parallel options get called just before we call the actual GATK tool (with the `java -jar` syntax that we used on Day 1).  The rest of the GATK command line stays mostly the same, except for the last line, which now looks quite different:
-~~~
--I {} -o $src/SNPs/{/..}.gvcf ::: $src/BamFiles/*.sort.bam
-~~~
+The parallel options get called just before we call the actual GATK tool (with the `java -jar` syntax that we used on Day 1).  The rest of the GATK command line stays mostly the same. The last thing that we need is the list generated in the correct directory.
 
-The `:::` notation separates the command from the input source for the command (always given last).  In this case, the input source is the list of all files in the BamFiles directory that end with ".sort.bam".  The `-I` option is the GATK flag for specifying the input file; the `{}` notation used by gnu-parallel means that the input file name will be one of the names it reads from the input source.  The `{/..}` notation means that the program should use the input file name minus the path and the 2 file extensions.  In other words, if the first file in my input list is "SRR098034.sort.bam", then `gnu-parallel` will see that for the first GATK process it needs an input file called "BamFiles/SRR098034.sort.bam" and an output file called "SRR098034.gvcf".
-
-Submit this job script to get the .gvcf files for each individual.
+Based on the structure of the parallel command try to generate the list.txt file that we will need in th directory we need it in. Try to avoid typing out the sample names if you can and instead use some of the commandline tricks we have learned so far. Once you think you have got it submit the `gatk-hapCall.sh` job script to try and get the .gvcf files for each individual. If it doesn't work immediately try to trouble shoot.
 
 # GATK GenotypeGVCFs
 The very last step in the pipeline, now that we have multiple .gvcf files, is to generate a single SNP file containing the genotypes at all sites with a sequence variant (mutation) in one or more individuals in our sample.  This is done with the `GATK` tool `GenotypeGVCFs`:
