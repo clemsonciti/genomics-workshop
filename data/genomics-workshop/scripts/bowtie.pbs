@@ -1,0 +1,5 @@
+#PBS -l select=1:ncpus=8:mem=31gb,walltime=1:00:00
+#PBS -N bowtie-algn
+
+cd ~/genomics-workshop
+bowtie2 -x Reference/Ecoli_Ref --rg-id SRR098034 --rg "SM:ZDB83" -U Trimming/SRR098034.trim.fq -S Alignment/SRR098034.sam

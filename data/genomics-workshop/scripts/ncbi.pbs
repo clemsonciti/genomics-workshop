@@ -1,0 +1,13 @@
+#PBS -l select=1:ncpus=5:mem=31gb,walltime=1:00:00
+#PBS -N sra1
+
+module load sratoolkit/2.8.2-1
+cd ~/ncbi/public/sra
+
+prefetch -v SRR098034
+prefetch -v SRR098035
+prefetch -v SRR098038
+prefetch -v SRR098039
+prefetch -v SRR098289
+
+fastq-dump SRR* --outdir ~/genomics-workshop/Raw_Fastq

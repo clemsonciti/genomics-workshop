@@ -1,0 +1,6 @@
+#PBS -l select=1:ncpus=1:mem=1gb,walltime=00:05:00
+#PBS -N first 
+
+cd /home/atrikut/genomics-workshop/data/dracula
+module load wordfreq/0.1
+wordfreq dracula.txt.*
