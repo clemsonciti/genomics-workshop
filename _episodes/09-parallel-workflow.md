@@ -42,18 +42,11 @@ mv * ~/genomics-workshop/Raw_Fastq/
 # Trimmomatic (Using a For Loop)
 For the purposes of this workshop, we are going to skip the first step of running FastQC on each file, and instead proceed directly to Step 2: Trimmomatic.
 
-In this example, we're going to use a `for` loop to run the same Trimmomatic command on every file inside of the Raw_Fastq directory.  The loop will help us do this all with one script (without having to write the command out 4 separate times), but note that in this first instance we are NOT running anything in parallel!  The command will run sequentially on each file (one after the other), but only one command will be executed at a time.  For the case of Trimmomatic, this is still fairly efficient, because Trimmomatic itself was written to be able to use multiple cores in one run (with the `-threads` option), but be aware that this will not be the case for all programs.
+In this example, we'd like to use a `for` loop to run the same Trimmomatic command on every file inside of the Raw_Fastq directory.  The loop will help us do this all with one script (without having to write the command out 4 separate times), but note that in this first instance we are NOT running anything in parallel!  The command will run sequentially on each file (one after the other), but only one command will be executed at a time.  For the case of Trimmomatic, this is still fairly efficient, because Trimmomatic itself was written to be able to use multiple cores in one run (with the `-threads` option), but be aware that this will not be the case for all programs.
 
-First, we will submit the PBS job script for running Trimmomatic (it will take about 15-17 minutes to run completely on all 5 files), and while it is running, we will look at the contents of the script more closely.
+ Since you have some experience with for loops from yesterday, try drafting a PBS script with a for loop that runs the trimmomatic command we used earlier on all the files. Don't for get to add the necessary #PBS headings at the top and we recommend selecting 8 cpus, 11gb of memory, and a walltime of 2 hours. Once you have a script drafted try to submit it and see if it runs.
 
-(NOTE FOR LIZ AND ASHWIN: WE NEED TO GO IN AND CHANGE THE PATHS IN THIS SCRIPT BEFORE INCLUDING IN THE FINAL WORKSHOP FOLDER)
-
-~~~
-[ecoope4@login001 scripts]$ qsub trimmomatic.sh 
-890699.pbs02
-~~~
-
-Once you have the script running, use the "more" command to open up the script and look at it:
+Now you can compare to the script below which you can find in the scripts directory
 ~~~
 130-127-150-127:code lizcooper$ more trimmomatic.sh 
 #!/bin/bash
@@ -137,9 +130,9 @@ bowtie2 -p 8 -x $src/Reference/E_coli \
 echo "FINISH ----------------------------"
 ~~~
 
-In this script, you can see that we define 2 variables, $srrname and $sample, that are each given a "TEMP" value to start with.  These are the values we will replace to be different for each input file.  Since the rest of the script uses the variable names, these will point to the correct values every time.  The parameters for Bowtie2 are the same as we used on Day 1.
+In this script, you can see that we define 2 variables, $srrname and $sample, that are each given a "TEMP" value to start with.  These are the values we will replace to be different for each input file.  Since the rest of the script uses the variable names, these will point to the correct values every time.  The parameters for Bowtie2 are the same as we used earlier
 
-The 2 values that we want to replace in this script are the SRA database ID for each file, and the Sample Name that corresponds to each ID.  These are given in a table from Day 1 describing the data, and are also provided in a text file called fileList.txt:
+The 2 values that we want to replace in this script are the SRA database ID for each file, and the Sample Name that corresponds to each ID.  These are given in a table describing the data, and are also provided in a text file called fileList.txt:
 ~~~
 [ecoope4@login001 workshop]$ less fileList.txt 
 SRR098034       ZDB83
@@ -162,9 +155,9 @@ do
 	done <fileList.txt 
 ~~~
 
-When this runs, you should have 5 new bowtie2 scripts.  Try using less to look at a couple of them, and check that the SRA ids and sample names have been changed correctly in each of them.  Now, you can submit each of these (you actually do NOT need to submit `bowtie2.1.sh`, since we ran this file yesterday) using the `qsub` command.
+When this runs, you should have 5 new bowtie2 scripts.  Try using less to look at a couple of them, and check that the SRA ids and sample names have been changed correctly in each of them.  Now, you can submit each of these (you actually do NOT need to submit `bowtie2.1.sh`, since we ran this interactively) using the `qsub` command.
 
-Despite how cumbersome this method may seem at first, this is actually my preferred way for dealing with a lot of files.  This method works the same no matter how many individual files you have, and having a separate job run for each file makes it easy to keep track of errors if anything goes wrong with just one or a few files. 
+Despite how cumbersome this method may seem at first, this is an effective way to deal with a lot of files.  This method works the same no matter how many individual files you have, and having a separate job run for each file makes it easy to keep track of errors if anything goes wrong with just one or a few files. 
 
 #  Using a single loop and job control to run Samtools
 
