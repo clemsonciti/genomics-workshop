@@ -10,7 +10,7 @@ module add java/1.8.0
 module load gnu-parallel
 module load GATK
 
-src=/home/$USER/genomics-workshop
+src=/scratch2/$USER/genomics-workshop
 
 ### Use gnu-parallel to use multiple cores
 ### within one script
