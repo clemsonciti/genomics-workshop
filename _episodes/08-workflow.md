@@ -120,7 +120,7 @@ Trimmomatic will clean up the raw sequencing data by removing any reads or parts
 Trimmomatic is a Java application, so we need to first load the java module.  When we run the program, note that we need to specify the path to the .jar file:
 
 ~~~
-cd ~/genomics-workshop
+cd /scratch2/$USER/genomics-workshop
 mkdir Trimming
 
 module load java/1.8.0
@@ -156,7 +156,7 @@ We will be using the program Bowtie2 for mapping, which is a very commonly used 
 
 Before we can align any reads, we have to first create an Index for our reference genome.  You only need to do this once for any reference genome file (i.e. not every time you map to it).
 ~~~
-cd ~/genomics-workshop
+cd /scratch2/$USER/genomics-workshop
 module load bowtie2/2.1.0
 bowtie2-build Reference/Ecoli_Ref.fa Reference/Ecoli_Ref
 ~~~
