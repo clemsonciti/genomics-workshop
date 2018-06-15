@@ -36,7 +36,7 @@ To unzip the folder and put the files in the correct directory (only necessary i
 ~~~
 unzip SampleFiles.zip
 cd SampleFiles/
-mv * ~/genomics-workshop/Raw_Fastq/
+mv * /scratch2/$USER/genomics-workshop/Raw_Fastq/
 ~~~
 
 # Trimmomatic (Using a For Loop)
@@ -59,7 +59,7 @@ echo "START ------------------------------"
 
 module add java/1.8.0
 
-src=/home/$USER/genomics-workshop
+src=/scratch2/$USER/genomics-workshop
 export adapt=$src/adapters.fasta
 
 for file in $src/Raw_Fastq/*.fastq
@@ -80,7 +80,7 @@ echo "FINISH ----------------------------"
 
 The Trimmomatic command itself is relatively unchanged from the command we ran in interactive mode (all of the parameter options are the same), but there are a few key pieces of this script that help with running the command effectively in a loop.  First, note these two lines:
 ~~~
-src=/home/$USER/genomics-workshop
+src=/scratch2/$USER/genomics-workshop
 export adapt=$src/adapters.fasta
 ~~~
 
@@ -116,7 +116,7 @@ echo "START ------------------------------"
 
 module add bowtie2/2.1.0 
 
-src=/home/$USER/genomics-workshop
+src=/scratch2/$USER/genomics-workshop
 export srrname=TEMP_SRA
 export sample=TEMP_SAMPLE
 
@@ -183,7 +183,7 @@ echo "START ------------------------------"
 
 module add samtools/1.4 
 
-src=/home/$USER/genomics-workshop
+src=/scratch2/$USER/genomics-workshop
 
 ### Loop over all aligned SAM files
 ### Convert to bam and sort
@@ -281,7 +281,7 @@ module add java/1.8.0
 module load gnu-parallel
 module load GATK
 
-src=/home/$USER/genomics-workshop
+src=/scratch2/$USER/genomics-workshop
 
 ### Use gnu-parallel to use multiple cores
 ### within one script
