@@ -109,7 +109,7 @@ SRR098034.sra
 
 From this directory, convert the file to .fastq format, and have it output to the Raw data folder we made inside of our workshop directory:
 ~~~
-[nelle@node1134 sra]$ fastq-dump SRR098034.sra --outdir ~/genomics-workshop/Raw_Fastq/
+[nelle@node1134 sra]$ fastq-dump SRR098034.sra --outdir /scratch2/$USER/genomics-workshop/Raw_Fastq/
 ~~~
 {: .bash}
 
@@ -122,7 +122,7 @@ Written 7575758 spots for SRR098034.sra
 This step might take a few minutes to complete.  Once it is finished, cd into the Raw_Fastq directory and check that the output file is there.
 
 ~~~
-[nelle@node1134 sra]$ cd ~/genomics-workshop/Raw_Fastq/
+[nelle@node1134 sra]$ cd /scratch2/$USER/genomics-workshop/Raw_Fastq/
 [nelle@node1134 Raw_Fastq]$ ls
 ~~~
 {: .bash}
