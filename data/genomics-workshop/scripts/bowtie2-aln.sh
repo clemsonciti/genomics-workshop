@@ -8,7 +8,7 @@ echo "START ------------------------------"
 
 module add bowtie2/2.1.0 
 
-src=/home/$USER/genomics-workshop
+src=/scratch2/$USER/genomics-workshop
 export srrname=TEMP_SRA
 export sample=TEMP_SAMPLE
 
