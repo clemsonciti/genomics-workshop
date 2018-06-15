@@ -325,3 +325,18 @@ java -jar $GATK \
 Note that in the above command line each individual file you want to include is specified with the `--variant` flag, and you can include as many individuals as you want in a single VCF file.
 
 Create your own PBS job script to run this final step (make sure you specify your paths correctly), and then submit it to get the final SNP file.  This should take 10 minutes (or less) to run.
+
+Now that we have a vcf file that contains all of our sequences we can take one final step and generate a quick phylogenetic tre to look at how these indiviuduals are related. To do this we will be using an R script that can read vcf and build a neighbor-joining run. The script is run with a very straightforward commmand
+
+~~~
+module load R
+Rscript quick_tree.R
+~~~
+
+Go ahead and write a PBS script to run these commands and after it runs you should find a phylo.pdf in the genomics-workshop directory. Transfer this file back to your personal computer using scp from a terminal in your personal computer like this:
+
+~~~
+scp username@xfer01-ext.palmetto.clemson.edu:/scratch2/username/genomic-scratch/phylo.pdf
+~~~
+
+Now you can open that file up and see the results of all our bioinformatic processing! Note that this is just one simple example of what you can do with these data, but there are many other options. Unfortunately, we don't have time to go through any other approaches but we hope that you now have the background and experience to to some investigating yourself. Good luck!
