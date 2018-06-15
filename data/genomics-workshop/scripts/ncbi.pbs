@@ -10,4 +10,4 @@ prefetch -v SRR098038
 prefetch -v SRR098039
 prefetch -v SRR098289
 
-fastq-dump SRR* --outdir ~/genomics-workshop/Raw_Fastq
+fastq-dump SRR* --outdir /scratch2/$USER/genomics-workshop/Raw_Fastq
