@@ -8,7 +8,7 @@ echo "START ------------------------------"
 
 module add samtools/1.4 
 
-src=/home/$USER/genomics-workshop
+src=/scratch2/$USER/genomics-workshop
 
 ### Loop over all aligned SAM files
 ### Convert to bam and sort
